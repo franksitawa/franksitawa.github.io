@@ -1,0 +1,25 @@
+---
+title: Portfolio
+---
+
+<div class="post-header">
+  <h1 class="post-title">My Portfolio</h1>
+  <p class="post-meta">A collection of my recent projects and work.</p>
+</div>
+
+<div class="portfolio-grid">
+    {% for item in site.portfolio %}
+    <div class="portfolio-item">
+        <h2><a href="{{ item.url }}">{{ item.title }}</a></h2>
+        {% if item.technologies %}
+        <p class="post-meta" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <strong>Tech:</strong> <span class="tech-stack">{{ item.technologies | join: ", " }}</span>
+        </p>
+        {% endif %}
+        <p>{{ item.content | strip_html | truncatewords: 25 }}</p>
+        <a href="{{ item.url }}" class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem; margin-top: 1rem;">View Project</a>
+    </div>
+    {% else %}
+    <p>No portfolio items found yet. Add markdown files to the `_portfolio` directory.</p>
+    {% endfor %}
+</div>

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }} | {{ site.title }}</title>
+    
+    <script>
+        // Check theme preference before rendering to avoid flicker
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{{ '/assets/css/styles.css' | relative_url }}">
+    {% feed_meta %}
+    {% seo %}
+</head>
+
+<body>
+    <canvas id="bg-canvas"></canvas>
+    {% include navigation.html %}
+    <main>
+        {{ content }}
+    </main>
+    {% include footer.html %}
+    
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="{{ '/assets/js/3d-background.js' | relative_url }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleButton = document.getElementById('theme-toggle');
+            const iconDark = document.getElementById('theme-icon-dark');
+            const iconLight = document.getElementById('theme-icon-light');
+
+            function updateIcons(theme) {
+                if (theme === 'light') {
+                    iconDark.style.display = 'block';
+                    iconLight.style.display = 'none';
+                } else {
+                    iconDark.style.display = 'none';
+                    iconLight.style.display = 'block';
+                }
+            }
+
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            updateIcons(currentTheme);
+
+            if(toggleButton) {
+                toggleButton.addEventListener('click', () => {
+                    let theme = document.documentElement.getAttribute('data-theme');
+                    theme = (theme === 'dark') ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', theme);
+                    localStorage.setItem('theme', theme);
+                    updateIcons(theme);
+                    window.dispatchEvent(new Event('themechange'));
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

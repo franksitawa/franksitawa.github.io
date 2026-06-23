@@ -1,0 +1,22 @@
+---
+layout: default
+---
+<article style="padding-top: 1rem;">
+    <div class="post-header">
+        <h1 class="post-title">{{ page.title }}</h1>
+        <div class="post-meta" style="margin-bottom: 2rem;">
+            {{ page.date | date_to_string }}
+            {% assign author = site.authors | where: 'short_name', page.author | first %}
+            {% if author %}
+            &bull; By <a href="{{ author.url }}">{{ author.name }}</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="post-content">
+        {{ content }}
+    </div>
+    
+    <hr>
+    <a href="{{ '/blog.html' | relative_url }}">&larr; Back to Blog</a>
+</article>
