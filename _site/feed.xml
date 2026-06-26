@@ -1,145 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://franksitawa.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://franksitawa.github.io/" rel="alternate" type="text/html" /><updated>2026-06-26T09:20:03+03:00</updated><id>https://franksitawa.github.io/feed.xml</id><title type="html">Frank Sitawa</title><subtitle>Technology, Travel, Food &amp; Life</subtitle><entry><title type="html">AI Agents: What Happens When AI Starts Taking Action</title><link href="https://franksitawa.github.io/ai/beginners/2026/06/23/agents.html" rel="alternate" type="text/html" title="AI Agents: What Happens When AI Starts Taking Action" /><published>2026-06-23T00:00:00+03:00</published><updated>2026-06-23T00:00:00+03:00</updated><id>https://franksitawa.github.io/ai/beginners/2026/06/23/agents</id><content type="html" xml:base="https://franksitawa.github.io/ai/beginners/2026/06/23/agents.html"><![CDATA[<p>A chatbot answers questions. An AI agent does something more interesting — it makes decisions, uses tools, and takes a sequence of steps to complete a goal.</p>
-
-<p>If LLMs are the brain, agents are what happen when you give that brain hands.</p>
-
-<h2 id="what-makes-something-an-agent">What Makes Something an Agent?</h2>
-
-<p>A basic language model takes input and produces output. One turn, done.</p>
-
-<p>An agent operates in a <strong>loop</strong>:</p>
-
-<ol>
-  <li>It receives a goal.</li>
-  <li>It decides what action to take.</li>
-  <li>It takes that action — searching the web, writing code, calling an API, reading a file.</li>
-  <li>It looks at the result.</li>
-  <li>It decides what to do next.</li>
-</ol>
-
-<p>This continues until the goal is complete — or the agent gets stuck.</p>
-
-<h2 id="a-concrete-example">A Concrete Example</h2>
-
-<p>Say you ask an AI agent: <em>“Research the top three AI tools for recruiters and summarise them in a table.”</em></p>
-
-<p>A chatbot would try to answer from memory, probably giving you outdated information.</p>
-
-<p>An agent would:</p>
-<ul>
-  <li>Search the web for recent articles on AI recruitment tools</li>
-  <li>Open and read several pages</li>
-  <li>Compare the tools across features, pricing, and reviews</li>
-  <li>Write a summary table based on what it actually found</li>
-</ul>
-
-<p>Same question, very different process.</p>
-
-<h2 id="the-tools-agents-use">The Tools Agents Use</h2>
-
-<p>Agents get access to <strong>tools</strong> — functions they can call to interact with the world. Common ones include:</p>
-
-<ul>
-  <li><strong>Web search</strong> — find current information</li>
-  <li><strong>Code execution</strong> — write and run code to solve problems</li>
-  <li><strong>File reading/writing</strong> — work with documents</li>
-  <li><strong>API calls</strong> — interact with external services like calendars, databases, or email</li>
-</ul>
-
-<p>The agent decides <em>which</em> tool to use and <em>when</em>, based on the goal and what it’s learned so far.</p>
-
-<h2 id="why-this-is-a-big-deal">Why This Is a Big Deal</h2>
-
-<p>Most real-world tasks aren’t single questions — they’re processes. Research, then analyse, then draft, then send. Agents can handle multi-step workflows that would otherwise require a human in the loop at every stage.</p>
-
-<p>This is why agents are showing up in software engineering, customer support, and business operations — anywhere a task has multiple steps that currently need a human at every stage.</p>
-
-<h2 id="what-to-watch-out-for">What to Watch Out For</h2>
-
-<p>Agents need guardrails. An agent that can take actions can also take the <em>wrong</em> ones — deleting files, sending premature emails, or looping on a task it can’t complete.</p>
-
-<p>Good agent design includes human checkpoints, especially for high-stakes tasks. Autonomy and oversight work together, not against each other.</p>
-
-<hr />
-<p><em>Frank Sitawa is an AI &amp; Fullstack Engineer based in Nairobi, Kenya.</em></p>]]></content><author><name>franksitawa</name></author><category term="AI" /><category term="Beginners" /><category term="ai-agents" /><category term="llm" /><category term="ai-basics" /><summary type="html"><![CDATA[A chatbot answers questions. An AI agent goes further — it makes decisions, uses tools, and takes steps to complete a goal. Here's how that works.]]></summary></entry><entry><title type="html">What Is a Large Language Model and How Does It Actually Work?</title><link href="https://franksitawa.github.io/ai/beginners/2026/06/23/llm.html" rel="alternate" type="text/html" title="What Is a Large Language Model and How Does It Actually Work?" /><published>2026-06-23T00:00:00+03:00</published><updated>2026-06-23T00:00:00+03:00</updated><id>https://franksitawa.github.io/ai/beginners/2026/06/23/llm</id><content type="html" xml:base="https://franksitawa.github.io/ai/beginners/2026/06/23/llm.html"><![CDATA[<p>ChatGPT, Gemini, Claude — you’ve heard the names. They’re all <strong>Large Language Models</strong>, or LLMs. But what does that actually mean? And how does a piece of software produce text that sounds like a human wrote it?</p>
-
-<p>Let’s break it down without the jargon.</p>
-
-<h2 id="it-starts-with-prediction">It Starts With Prediction</h2>
-
-<p>At its core, an LLM does one thing: it predicts the next word.</p>
-
-<p>Given the sentence <em>“The capital of France is…“</em>, it predicts <em>“Paris”</em>. Given <em>“She opened the door and…“</em>, it predicts something that fits — <em>“walked in”</em>, <em>“screamed”</em>, whatever makes sense in context.</p>
-
-<p>That sounds simple. But do this billions of times, across hundreds of billions of words of text, and something remarkable happens: the model starts to develop a deep sense of language, facts, reasoning patterns, even tone.</p>
-
-<h2 id="how-it-learns">How It Learns</h2>
-
-<p>LLMs are trained on massive amounts of text — books, websites, code, articles. During training, the model reads a sentence, tries to predict the next word, checks if it got it right, and adjusts its internal settings slightly based on the error. Repeat this trillions of times.</p>
-
-<p>The model never memorises text word for word. Instead, it learns <em>patterns</em> — grammar, facts, how arguments are structured, how questions are typically answered.</p>
-
-<h2 id="what-large-actually-means">What “Large” Actually Means</h2>
-
-<p>The “large” in Large Language Model refers to the number of <strong>parameters</strong> — the internal numerical settings the model adjusts during training. GPT-4 is estimated to have over a trillion parameters. More parameters generally means more capacity to capture nuance and handle complex tasks.</p>
-
-<p>More parameters also means more computing power needed, which is why training frontier models costs tens of millions of dollars.</p>
-
-<h2 id="why-they-sound-so-human">Why They Sound So Human</h2>
-
-<p>Because they’re trained on human-written text. The model has seen how humans explain things, argue, joke, apologise, and teach. It learned to mirror those patterns.</p>
-
-<p>It doesn’t <em>understand</em> in the way you do. There’s no meaning behind the words for the model — just statistical relationships between tokens. But those relationships are rich enough to produce output that’s often indistinguishable from human writing.</p>
-
-<h2 id="the-limitation-to-keep-in-mind">The Limitation to Keep in Mind</h2>
-
-<p>LLMs are frozen at training time. They don’t learn from your conversations, and they don’t know what happened after their training cutoff. That’s exactly why RAG (see the previous post) exists — to give them access to fresh, specific information at query time.</p>
-
-<hr />
-<p><em>Frank Sitawa is an AI &amp; Fullstack Engineer based in Nairobi, Kenya.</em></p>]]></content><author><name>franksitawa</name></author><category term="AI" /><category term="Beginners" /><category term="llm" /><category term="ai-basics" /><category term="language-models" /><summary type="html"><![CDATA[ChatGPT, Gemini, Claude — they're all Large Language Models. But what does that actually mean, and how do they produce such convincing text?]]></summary></entry><entry><title type="html">How AI Finds and Uses Information: A Beginner’s Guide to RAG</title><link href="https://franksitawa.github.io/ai/beginners/2026/06/23/rag.html" rel="alternate" type="text/html" title="How AI Finds and Uses Information: A Beginner’s Guide to RAG" /><published>2026-06-23T00:00:00+03:00</published><updated>2026-06-23T00:00:00+03:00</updated><id>https://franksitawa.github.io/ai/beginners/2026/06/23/rag</id><content type="html" xml:base="https://franksitawa.github.io/ai/beginners/2026/06/23/rag.html"><![CDATA[<p>Ever asked an AI chatbot a question and gotten a confidently wrong answer? That’s not a random glitch — it’s a fundamental limitation of how most AI models work. And the fix has a name: <strong>RAG</strong>.</p>
-
-<p>RAG stands for <strong>Retrieval-Augmented Generation</strong>. The idea is simple once you see it.</p>
-
-<h2 id="the-problem-ai-works-from-memory-alone">The Problem: AI Works From Memory Alone</h2>
-
-<p>A standard AI language model is like a very well-read person who studied everything on the internet up to a certain date — then went into a room with no phone, no books, and no Wi-Fi.</p>
-
-<p>They’ll answer from memory. But if something changed after they went in, they won’t know. And if they half-remember something, they’ll fill in the gaps with a guess — and sound completely confident doing it. Researchers call this <strong>hallucination</strong>.</p>
-
-<h2 id="the-fix-give-the-ai-a-way-to-look-things-up">The Fix: Give the AI a Way to Look Things Up</h2>
-
-<p>RAG adds a retrieval step before the AI responds:</p>
-
-<ol>
-  <li>You ask a question.</li>
-  <li>The system searches a knowledge base — documents, PDFs, records — and pulls the most relevant pieces.</li>
-  <li>Those pieces get passed to the AI alongside your question.</li>
-  <li>The AI answers using both what it knows <em>and</em> what it just retrieved.</li>
-</ol>
-
-<p>The AI is no longer working from memory alone.</p>
-
-<h2 id="a-simple-analogy">A Simple Analogy</h2>
-
-<p>You’re a customer support agent. A customer asks about the current savings interest rate. You don’t guess — you search the company handbook and give an accurate answer.</p>
-
-<p>That’s RAG. The handbook is the knowledge base. The search is retrieval. Your response is generation.</p>
-
-<h2 id="why-it-matters">Why It Matters</h2>
-
-<ul>
-  <li><strong>Stays current</strong> — update the knowledge base without retraining the model.</li>
-  <li><strong>More accurate</strong> — the AI works from real documents, not reconstructed memory.</li>
-  <li><strong>Transparent</strong> — you can show users exactly which source the answer came from.</li>
-</ul>
-
-<p>This is why RAG powers legal research tools, medical assistants, enterprise knowledge bases, and customer support bots.</p>
-
-<h2 id="what-rag-doesnt-fix">What RAG Doesn’t Fix</h2>
-
-<p>RAG is powerful but not magic. If the knowledge base has bad information, the AI will use it. If retrieval pulls the wrong documents, the answer suffers. Think of it as giving the AI a library card — whether it finds the right book still matters.</p>
-
-<hr />
-<p><em>Frank Sitawa is an AI &amp; Fullstack Engineer based in Nairobi, Kenya.</em></p>]]></content><author><name>franksitawa</name></author><category term="AI" /><category term="Beginners" /><category term="rag" /><category term="llm" /><category term="ai-basics" /><summary type="html"><![CDATA[Ever wondered why ChatGPT sometimes makes things up — and how smarter AI systems get around that? The answer is RAG.]]></summary></entry><entry><title type="html">Running XTTS-v2 with Docker and NVIDIA CUDA on Ubuntu</title><link href="https://franksitawa.github.io/ai/tts/docker/2025/01/01/xxts.html" rel="alternate" type="text/html" title="Running XTTS-v2 with Docker and NVIDIA CUDA on Ubuntu" /><published>2025-01-01T09:00:00+03:00</published><updated>2025-01-01T09:00:00+03:00</updated><id>https://franksitawa.github.io/ai/tts/docker/2025/01/01/xxts</id><content type="html" xml:base="https://franksitawa.github.io/ai/tts/docker/2025/01/01/xxts.html"><![CDATA[<p><a href="https://github.com/coqui-ai/TTS">XTTS-v2</a> from Coqui is one of the most capable open-source TTS systems available today. It supports multilingual synthesis and voice cloning from a short audio sample — all running locally on your hardware.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://franksitawa.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://franksitawa.github.io/" rel="alternate" type="text/html" /><updated>2026-06-26T09:23:28+03:00</updated><id>https://franksitawa.github.io/feed.xml</id><title type="html">Frank Sitawa</title><subtitle>Technology, Travel, Food &amp; Life</subtitle><entry><title type="html">Running XTTS-v2 with Docker and NVIDIA CUDA on Ubuntu</title><link href="https://franksitawa.github.io/ai/tts/docker/2026/06/25/xxts.html" rel="alternate" type="text/html" title="Running XTTS-v2 with Docker and NVIDIA CUDA on Ubuntu" /><published>2026-06-25T00:00:00+03:00</published><updated>2026-06-25T00:00:00+03:00</updated><id>https://franksitawa.github.io/ai/tts/docker/2026/06/25/xxts</id><content type="html" xml:base="https://franksitawa.github.io/ai/tts/docker/2026/06/25/xxts.html"><![CDATA[<p><a href="https://github.com/coqui-ai/TTS">XTTS-v2</a> from Coqui is one of the most capable open-source TTS systems available today. It supports multilingual synthesis and voice cloning from a short audio sample — all running locally on your hardware.</p>
 
 <p>This guide walks through running XTTS-v2 inside Docker on Ubuntu with CUDA-accelerated GPU inference, which makes speech generation dramatically faster than CPU-only execution.</p>
 
@@ -381,4 +240,148 @@ docker compose up <span class="nt">-d</span>
   <li><strong>Automated content creation workflows</strong> driven by n8n or LangGraph agents</li>
 </ul>
 
-<p>XTTS-v2 runs entirely on your machine, with no API costs and no data leaving your environment.</p>]]></content><author><name></name></author><category term="ai" /><category term="tts" /><category term="docker" /><category term="xtts" /><category term="tts" /><category term="docker" /><category term="nvidia" /><category term="cuda" /><category term="voice-cloning" /><category term="local-ai" /><summary type="html"><![CDATA[A practical guide to running Coqui XTTS-v2 locally using Docker and NVIDIA GPU acceleration on Ubuntu — with GPU setup, Docker Compose config, and common troubleshooting fixes.]]></summary></entry></feed>
+<p>XTTS-v2 runs entirely on your machine, with no API costs and no data leaving your environment.</p>
+
+<hr />
+<p><em>Frank Sitawa is an AI &amp; Fullstack Engineer based in Nairobi, Kenya.</em></p>]]></content><author><name></name></author><category term="ai" /><category term="tts" /><category term="docker" /><category term="xtts" /><category term="tts" /><category term="docker" /><category term="nvidia" /><category term="cuda" /><category term="voice-cloning" /><category term="local-ai" /><summary type="html"><![CDATA[A practical guide to running Coqui XTTS-v2 locally using Docker and NVIDIA GPU acceleration on Ubuntu — with GPU setup, Docker Compose config, and common troubleshooting fixes.]]></summary></entry><entry><title type="html">AI Agents: What Happens When AI Starts Taking Action</title><link href="https://franksitawa.github.io/ai/beginners/2026/06/23/agents.html" rel="alternate" type="text/html" title="AI Agents: What Happens When AI Starts Taking Action" /><published>2026-06-23T00:00:00+03:00</published><updated>2026-06-23T00:00:00+03:00</updated><id>https://franksitawa.github.io/ai/beginners/2026/06/23/agents</id><content type="html" xml:base="https://franksitawa.github.io/ai/beginners/2026/06/23/agents.html"><![CDATA[<p>A chatbot answers questions. An AI agent does something more interesting — it makes decisions, uses tools, and takes a sequence of steps to complete a goal.</p>
+
+<p>If LLMs are the brain, agents are what happen when you give that brain hands.</p>
+
+<h2 id="what-makes-something-an-agent">What Makes Something an Agent?</h2>
+
+<p>A basic language model takes input and produces output. One turn, done.</p>
+
+<p>An agent operates in a <strong>loop</strong>:</p>
+
+<ol>
+  <li>It receives a goal.</li>
+  <li>It decides what action to take.</li>
+  <li>It takes that action — searching the web, writing code, calling an API, reading a file.</li>
+  <li>It looks at the result.</li>
+  <li>It decides what to do next.</li>
+</ol>
+
+<p>This continues until the goal is complete — or the agent gets stuck.</p>
+
+<h2 id="a-concrete-example">A Concrete Example</h2>
+
+<p>Say you ask an AI agent: <em>“Research the top three AI tools for recruiters and summarise them in a table.”</em></p>
+
+<p>A chatbot would try to answer from memory, probably giving you outdated information.</p>
+
+<p>An agent would:</p>
+<ul>
+  <li>Search the web for recent articles on AI recruitment tools</li>
+  <li>Open and read several pages</li>
+  <li>Compare the tools across features, pricing, and reviews</li>
+  <li>Write a summary table based on what it actually found</li>
+</ul>
+
+<p>Same question, very different process.</p>
+
+<h2 id="the-tools-agents-use">The Tools Agents Use</h2>
+
+<p>Agents get access to <strong>tools</strong> — functions they can call to interact with the world. Common ones include:</p>
+
+<ul>
+  <li><strong>Web search</strong> — find current information</li>
+  <li><strong>Code execution</strong> — write and run code to solve problems</li>
+  <li><strong>File reading/writing</strong> — work with documents</li>
+  <li><strong>API calls</strong> — interact with external services like calendars, databases, or email</li>
+</ul>
+
+<p>The agent decides <em>which</em> tool to use and <em>when</em>, based on the goal and what it’s learned so far.</p>
+
+<h2 id="why-this-is-a-big-deal">Why This Is a Big Deal</h2>
+
+<p>Most real-world tasks aren’t single questions — they’re processes. Research, then analyse, then draft, then send. Agents can handle multi-step workflows that would otherwise require a human in the loop at every stage.</p>
+
+<p>This is why agents are showing up in software engineering, customer support, and business operations — anywhere a task has multiple steps that currently need a human at every stage.</p>
+
+<h2 id="what-to-watch-out-for">What to Watch Out For</h2>
+
+<p>Agents need guardrails. An agent that can take actions can also take the <em>wrong</em> ones — deleting files, sending premature emails, or looping on a task it can’t complete.</p>
+
+<p>Good agent design includes human checkpoints, especially for high-stakes tasks. Autonomy and oversight work together, not against each other.</p>
+
+<hr />
+<p><em>Frank Sitawa is an AI &amp; Fullstack Engineer based in Nairobi, Kenya.</em></p>]]></content><author><name>franksitawa</name></author><category term="AI" /><category term="Beginners" /><category term="ai-agents" /><category term="llm" /><category term="ai-basics" /><summary type="html"><![CDATA[A chatbot answers questions. An AI agent goes further — it makes decisions, uses tools, and takes steps to complete a goal. Here's how that works.]]></summary></entry><entry><title type="html">What Is a Large Language Model and How Does It Actually Work?</title><link href="https://franksitawa.github.io/ai/beginners/2026/06/23/llm.html" rel="alternate" type="text/html" title="What Is a Large Language Model and How Does It Actually Work?" /><published>2026-06-23T00:00:00+03:00</published><updated>2026-06-23T00:00:00+03:00</updated><id>https://franksitawa.github.io/ai/beginners/2026/06/23/llm</id><content type="html" xml:base="https://franksitawa.github.io/ai/beginners/2026/06/23/llm.html"><![CDATA[<p>ChatGPT, Gemini, Claude — you’ve heard the names. They’re all <strong>Large Language Models</strong>, or LLMs. But what does that actually mean? And how does a piece of software produce text that sounds like a human wrote it?</p>
+
+<p>Let’s break it down without the jargon.</p>
+
+<h2 id="it-starts-with-prediction">It Starts With Prediction</h2>
+
+<p>At its core, an LLM does one thing: it predicts the next word.</p>
+
+<p>Given the sentence <em>“The capital of France is…“</em>, it predicts <em>“Paris”</em>. Given <em>“She opened the door and…“</em>, it predicts something that fits — <em>“walked in”</em>, <em>“screamed”</em>, whatever makes sense in context.</p>
+
+<p>That sounds simple. But do this billions of times, across hundreds of billions of words of text, and something remarkable happens: the model starts to develop a deep sense of language, facts, reasoning patterns, even tone.</p>
+
+<h2 id="how-it-learns">How It Learns</h2>
+
+<p>LLMs are trained on massive amounts of text — books, websites, code, articles. During training, the model reads a sentence, tries to predict the next word, checks if it got it right, and adjusts its internal settings slightly based on the error. Repeat this trillions of times.</p>
+
+<p>The model never memorises text word for word. Instead, it learns <em>patterns</em> — grammar, facts, how arguments are structured, how questions are typically answered.</p>
+
+<h2 id="what-large-actually-means">What “Large” Actually Means</h2>
+
+<p>The “large” in Large Language Model refers to the number of <strong>parameters</strong> — the internal numerical settings the model adjusts during training. GPT-4 is estimated to have over a trillion parameters. More parameters generally means more capacity to capture nuance and handle complex tasks.</p>
+
+<p>More parameters also means more computing power needed, which is why training frontier models costs tens of millions of dollars.</p>
+
+<h2 id="why-they-sound-so-human">Why They Sound So Human</h2>
+
+<p>Because they’re trained on human-written text. The model has seen how humans explain things, argue, joke, apologise, and teach. It learned to mirror those patterns.</p>
+
+<p>It doesn’t <em>understand</em> in the way you do. There’s no meaning behind the words for the model — just statistical relationships between tokens. But those relationships are rich enough to produce output that’s often indistinguishable from human writing.</p>
+
+<h2 id="the-limitation-to-keep-in-mind">The Limitation to Keep in Mind</h2>
+
+<p>LLMs are frozen at training time. They don’t learn from your conversations, and they don’t know what happened after their training cutoff. That’s exactly why RAG (see the previous post) exists — to give them access to fresh, specific information at query time.</p>
+
+<hr />
+<p><em>Frank Sitawa is an AI &amp; Fullstack Engineer based in Nairobi, Kenya.</em></p>]]></content><author><name>franksitawa</name></author><category term="AI" /><category term="Beginners" /><category term="llm" /><category term="ai-basics" /><category term="language-models" /><summary type="html"><![CDATA[ChatGPT, Gemini, Claude — they're all Large Language Models. But what does that actually mean, and how do they produce such convincing text?]]></summary></entry><entry><title type="html">How AI Finds and Uses Information: A Beginner’s Guide to RAG</title><link href="https://franksitawa.github.io/ai/beginners/2026/06/23/rag.html" rel="alternate" type="text/html" title="How AI Finds and Uses Information: A Beginner’s Guide to RAG" /><published>2026-06-23T00:00:00+03:00</published><updated>2026-06-23T00:00:00+03:00</updated><id>https://franksitawa.github.io/ai/beginners/2026/06/23/rag</id><content type="html" xml:base="https://franksitawa.github.io/ai/beginners/2026/06/23/rag.html"><![CDATA[<p>Ever asked an AI chatbot a question and gotten a confidently wrong answer? That’s not a random glitch — it’s a fundamental limitation of how most AI models work. And the fix has a name: <strong>RAG</strong>.</p>
+
+<p>RAG stands for <strong>Retrieval-Augmented Generation</strong>. The idea is simple once you see it.</p>
+
+<h2 id="the-problem-ai-works-from-memory-alone">The Problem: AI Works From Memory Alone</h2>
+
+<p>A standard AI language model is like a very well-read person who studied everything on the internet up to a certain date — then went into a room with no phone, no books, and no Wi-Fi.</p>
+
+<p>They’ll answer from memory. But if something changed after they went in, they won’t know. And if they half-remember something, they’ll fill in the gaps with a guess — and sound completely confident doing it. Researchers call this <strong>hallucination</strong>.</p>
+
+<h2 id="the-fix-give-the-ai-a-way-to-look-things-up">The Fix: Give the AI a Way to Look Things Up</h2>
+
+<p>RAG adds a retrieval step before the AI responds:</p>
+
+<ol>
+  <li>You ask a question.</li>
+  <li>The system searches a knowledge base — documents, PDFs, records — and pulls the most relevant pieces.</li>
+  <li>Those pieces get passed to the AI alongside your question.</li>
+  <li>The AI answers using both what it knows <em>and</em> what it just retrieved.</li>
+</ol>
+
+<p>The AI is no longer working from memory alone.</p>
+
+<h2 id="a-simple-analogy">A Simple Analogy</h2>
+
+<p>You’re a customer support agent. A customer asks about the current savings interest rate. You don’t guess — you search the company handbook and give an accurate answer.</p>
+
+<p>That’s RAG. The handbook is the knowledge base. The search is retrieval. Your response is generation.</p>
+
+<h2 id="why-it-matters">Why It Matters</h2>
+
+<ul>
+  <li><strong>Stays current</strong> — update the knowledge base without retraining the model.</li>
+  <li><strong>More accurate</strong> — the AI works from real documents, not reconstructed memory.</li>
+  <li><strong>Transparent</strong> — you can show users exactly which source the answer came from.</li>
+</ul>
+
+<p>This is why RAG powers legal research tools, medical assistants, enterprise knowledge bases, and customer support bots.</p>
+
+<h2 id="what-rag-doesnt-fix">What RAG Doesn’t Fix</h2>
+
+<p>RAG is powerful but not magic. If the knowledge base has bad information, the AI will use it. If retrieval pulls the wrong documents, the answer suffers. Think of it as giving the AI a library card — whether it finds the right book still matters.</p>
+
+<hr />
+<p><em>Frank Sitawa is an AI &amp; Fullstack Engineer based in Nairobi, Kenya.</em></p>]]></content><author><name>franksitawa</name></author><category term="AI" /><category term="Beginners" /><category term="rag" /><category term="llm" /><category term="ai-basics" /><summary type="html"><![CDATA[Ever wondered why ChatGPT sometimes makes things up — and how smarter AI systems get around that? The answer is RAG.]]></summary></entry></feed>
