@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Running XTTS-v2 with Docker and NVIDIA CUDA on Ubuntu | Frank Sitawa</title>
+    
+    <script>
+        // Check theme preference before rendering to avoid flicker
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link type="application/atom+xml" rel="alternate" href="https://franksitawa.github.io/feed.xml" title="Frank Sitawa" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Running XTTS-v2 with Docker and NVIDIA CUDA on Ubuntu | Frank Sitawa</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Running XTTS-v2 with Docker and NVIDIA CUDA on Ubuntu" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A practical guide to running Coqui XTTS-v2 locally using Docker and NVIDIA GPU acceleration on Ubuntu — with GPU setup, Docker Compose config, and common troubleshooting fixes." />
+<meta property="og:description" content="A practical guide to running Coqui XTTS-v2 locally using Docker and NVIDIA GPU acceleration on Ubuntu — with GPU setup, Docker Compose config, and common troubleshooting fixes." />
+<link rel="canonical" href="https://franksitawa.github.io/ai/tts/docker/2025/01/01/xxts.html" />
+<meta property="og:url" content="https://franksitawa.github.io/ai/tts/docker/2025/01/01/xxts.html" />
+<meta property="og:site_name" content="Frank Sitawa" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2025-01-01T09:00:00+03:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Running XTTS-v2 with Docker and NVIDIA CUDA on Ubuntu" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-01-01T09:00:00+03:00","datePublished":"2025-01-01T09:00:00+03:00","description":"A practical guide to running Coqui XTTS-v2 locally using Docker and NVIDIA GPU acceleration on Ubuntu — with GPU setup, Docker Compose config, and common troubleshooting fixes.","headline":"Running XTTS-v2 with Docker and NVIDIA CUDA on Ubuntu","mainEntityOfPage":{"@type":"WebPage","@id":"https://franksitawa.github.io/ai/tts/docker/2025/01/01/xxts.html"},"url":"https://franksitawa.github.io/ai/tts/docker/2025/01/01/xxts.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+<body>
+    <canvas id="bg-canvas"></canvas>
+    <header>
+    <div style="display: flex; align-items: center;">
+        <img src="/assets/images/profile.jpeg" alt="Frank Sitawa" class="nav-profile-pic">
+        <a href="/" class="site-title">Frank Sitawa</a>
+    </div>
+    <nav style="align-items: center;">
+        
+        <a href="/" >Home</a>
+        
+        <a href="/blog.html" >Blog</a>
+        
+        <a href="/portfolio.html" >Portfolio</a>
+        
+        <a href="/cv.html" >CV</a>
+        
+        <a href="/about.html" >About</a>
+        
+        <button id="theme-toggle" aria-label="Toggle Dark/Light Mode" style="background: none; border: none; cursor: pointer; color: var(--text-color); font-size: 1.2rem; padding: 0;">
+            <svg id="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <svg id="theme-icon-light" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+    </nav>
+</header>
+    <main>
+        <article style="padding-top: 1rem;">
+    <div class="post-header">
+        <h1 class="post-title">Running XTTS-v2 with Docker and NVIDIA CUDA on Ubuntu</h1>
+        <div class="post-meta" style="margin-bottom: 2rem;">
+            01 Jan 2025
+            
+            
+            &bull; By <a href="/authors/franksitawa.html">Frank Sitawa</a>
+            
+        </div>
+    </div>
+
+    <div class="post-content">
+        <p><a href="https://github.com/coqui-ai/TTS">XTTS-v2</a> from Coqui is one of the most capable open-source TTS systems available today. It supports multilingual synthesis and voice cloning from a short audio sample — all running locally on your hardware.</p>
+
+<p>This guide walks through running XTTS-v2 inside Docker on Ubuntu with CUDA-accelerated GPU inference, which makes speech generation dramatically faster than CPU-only execution.</p>
+
+<hr />
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>Before starting, make sure you have:</p>
+
+<ul>
+  <li>Ubuntu 22.04 or 24.04</li>
+  <li>An NVIDIA GPU with drivers installed</li>
+  <li>Docker and Docker Compose installed</li>
+</ul>
+
+<p>Verify your GPU is visible to the system:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nvidia-smi
+</code></pre></div></div>
+
+<p>You should see a table showing your GPU name, driver version, and memory usage. If this command fails, install your NVIDIA drivers first before proceeding.</p>
+
+<hr />
+
+<h2 id="step-1-install-docker">Step 1: Install Docker</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt update
+<span class="nb">sudo </span>apt <span class="nb">install </span>docker.io <span class="nt">-y</span>
+<span class="nb">sudo </span>systemctl <span class="nb">enable </span>docker
+<span class="nb">sudo </span>systemctl start docker
+docker <span class="nt">--version</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="step-2-install-docker-compose">Step 2: Install Docker Compose</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>docker-compose-plugin <span class="nt">-y</span>
+docker compose version
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="step-3-install-the-nvidia-container-toolkit">Step 3: Install the NVIDIA Container Toolkit</h2>
+
+<p>By default, Docker containers cannot access your GPU. You can confirm this by running:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker info | <span class="nb">grep</span> <span class="nt">-i</span> runtime
+</code></pre></div></div>
+
+<p>If the output only shows <code class="language-plaintext highlighter-rouge">runc</code> and not <code class="language-plaintext highlighter-rouge">nvidia</code>, Docker has no GPU support yet.</p>
+
+<p>Add the NVIDIA repository and install the toolkit:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-fsSL</span> https://nvidia.github.io/libnvidia-container/gpgkey | <span class="se">\</span>
+  <span class="nb">sudo </span>gpg <span class="nt">--dearmor</span> <span class="nt">-o</span> /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+
+curl <span class="nt">-s</span> <span class="nt">-L</span> <span class="se">\</span>
+  https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | <span class="se">\</span>
+  <span class="nb">sed</span> <span class="s1">'s#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g'</span> | <span class="se">\</span>
+  <span class="nb">sudo tee</span> /etc/apt/sources.list.d/nvidia-container-toolkit.list
+
+<span class="nb">sudo </span>apt update
+<span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> nvidia-container-toolkit
+<span class="nb">sudo </span>nvidia-ctk runtime configure <span class="nt">--runtime</span><span class="o">=</span>docker
+<span class="nb">sudo </span>systemctl restart docker
+</code></pre></div></div>
+
+<p>Verify the NVIDIA runtime is now registered:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker info | <span class="nb">grep</span> <span class="nt">-i</span> runtime
+<span class="c"># Expected: Runtimes: io.containerd.runc.v2 nvidia runc</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="step-4-test-gpu-access-from-docker">Step 4: Test GPU Access from Docker</h2>
+
+<p>Before deploying XTTS, confirm that Docker can see the GPU:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--rm</span> <span class="nt">--gpus</span> all <span class="se">\</span>
+  nvidia/cuda:12.2.0-base-ubuntu22.04 <span class="se">\</span>
+  nvidia-smi
+</code></pre></div></div>
+
+<p>If you see GPU info printed from inside the container, you are ready to proceed.</p>
+
+<hr />
+
+<h2 id="step-5-create-the-project-structure">Step 5: Create the Project Structure</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir </span>xtts <span class="o">&amp;&amp;</span> <span class="nb">cd </span>xtts
+<span class="nb">mkdir </span>speakers output
+</code></pre></div></div>
+
+<p>Your directory should look like this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xtts/
+├── speakers/
+└── output/
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">speakers/</code> folder will hold your voice reference WAV files, and <code class="language-plaintext highlighter-rouge">output/</code> is where generated audio will be written.</p>
+
+<hr />
+
+<h2 id="step-6-create-the-docker-compose-file">Step 6: Create the Docker Compose File</h2>
+
+<p>Create <code class="language-plaintext highlighter-rouge">docker-compose.yml</code> inside the <code class="language-plaintext highlighter-rouge">xtts/</code> directory:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">services</span><span class="pi">:</span>
+  <span class="na">xtts</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">daswer123/xtts-api-server</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">xtts</span>
+
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">8020:8020"</span>
+
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./speakers:/app/speakers</span>
+      <span class="pi">-</span> <span class="s">./output:/app/output</span>
+      <span class="pi">-</span> <span class="s">xtts_models:/app/models</span>
+
+    <span class="na">deploy</span><span class="pi">:</span>
+      <span class="na">resources</span><span class="pi">:</span>
+        <span class="na">reservations</span><span class="pi">:</span>
+          <span class="na">devices</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">driver</span><span class="pi">:</span> <span class="s">nvidia</span>
+              <span class="na">count</span><span class="pi">:</span> <span class="s">all</span>
+              <span class="na">capabilities</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">gpu</span><span class="pi">]</span>
+
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">unless-stopped</span>
+
+<span class="na">volumes</span><span class="pi">:</span>
+  <span class="na">xtts_models</span><span class="pi">:</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Note:</strong> Do not override the container’s <code class="language-plaintext highlighter-rouge">command:</code> field. The <code class="language-plaintext highlighter-rouge">daswer123/xtts-api-server</code> image uses a custom entrypoint, and overriding it with <code class="language-plaintext highlighter-rouge">python -m xtts_api_server</code> causes an <code class="language-plaintext highlighter-rouge">exec: python: not found</code> error. Let the image use its defaults.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="step-7-start-the-container">Step 7: Start the Container</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>docker compose up <span class="nt">-d</span>
+<span class="nb">sudo </span>docker ps
+</code></pre></div></div>
+
+<p>Check that the container is running, then follow the logs:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>docker logs <span class="nt">-f</span> xtts
+</code></pre></div></div>
+
+<p>The first startup will download the XTTS-v2 model, which may take a few minutes.</p>
+
+<hr />
+
+<h2 id="step-8-add-a-voice-sample">Step 8: Add a Voice Sample</h2>
+
+<p>Record a clean WAV file of the voice you want to clone — 6 to 30 seconds of clear speech works best. Tools like <a href="https://www.audacityteam.org/">Audacity</a> or OBS Studio work well on Ubuntu.</p>
+
+<p>Place the file in:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>speakers/frank.wav
+</code></pre></div></div>
+
+<p>Verify the container can see it:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nb">exec</span> <span class="nt">-it</span> xtts <span class="nb">ls</span> /app/speakers
+<span class="c"># frank.wav</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="step-9-generate-speech">Step 9: Generate Speech</h2>
+
+<p>Open the API docs in your browser:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://localhost:8020/docs
+</code></pre></div></div>
+
+<p>Send a request to the <code class="language-plaintext highlighter-rouge">/tts_to_file</code> or <code class="language-plaintext highlighter-rouge">/tts_to_audio</code> endpoint with a payload like:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Welcome to my YouTube channel."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"speaker_wav"</span><span class="p">:</span><span class="w"> </span><span class="s2">"frank.wav"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>XTTS will clone the voice from <code class="language-plaintext highlighter-rouge">frank.wav</code> and return synthesised audio.</p>
+
+<hr />
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<h3 id="could-not-select-device-driver-nvidia-with-capabilities-gpu"><code class="language-plaintext highlighter-rouge">could not select device driver "nvidia" with capabilities: [[gpu]]</code></h3>
+
+<p>The NVIDIA Container Toolkit is not installed or not configured. Re-run Step 3.</p>
+
+<hr />
+
+<h3 id="exec-python-not-found"><code class="language-plaintext highlighter-rouge">exec: python: not found</code></h3>
+
+<p>You added a <code class="language-plaintext highlighter-rouge">command:</code> override in <code class="language-plaintext highlighter-rouge">docker-compose.yml</code>. Remove it and let the image use its default entrypoint.</p>
+
+<hr />
+
+<h3 id="failed-to-open-the-input-appexamplefrankwav"><code class="language-plaintext highlighter-rouge">Failed to open the input "/app/example/frank.wav"</code></h3>
+
+<p>The WAV file is not in the right place or the volume is not mapped correctly. Confirm:</p>
+
+<ul>
+  <li>The file is at <code class="language-plaintext highlighter-rouge">speakers/frank.wav</code> on the host</li>
+  <li>The volume in <code class="language-plaintext highlighter-rouge">docker-compose.yml</code> is <code class="language-plaintext highlighter-rouge">./speakers:/app/speakers</code></li>
+</ul>
+
+<hr />
+
+<h3 id="no-configuration-file-provided-not-found"><code class="language-plaintext highlighter-rouge">no configuration file provided: not found</code></h3>
+
+<p>You are running <code class="language-plaintext highlighter-rouge">docker compose up</code> from the wrong directory. Navigate to the folder containing <code class="language-plaintext highlighter-rouge">docker-compose.yml</code> first:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>xtts
+docker compose up <span class="nt">-d</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="what-you-can-build-with-this">What You Can Build With This</h2>
+
+<p>Once XTTS-v2 is running, it becomes a powerful building block for a local AI media stack:</p>
+
+<ul>
+  <li><strong>AI assistants</strong> with a cloned or custom voice</li>
+  <li><strong>Audiobook generation</strong> from text or EPUB files</li>
+  <li><strong>YouTube narration pipelines</strong> — combine with faster-whisper for transcription and FFmpeg for final rendering</li>
+  <li><strong>Automated content creation workflows</strong> driven by n8n or LangGraph agents</li>
+</ul>
+
+<p>XTTS-v2 runs entirely on your machine, with no API costs and no data leaving your environment.</p>
+
+    </div>
+    
+    <hr>
+    <a href="/blog.html">&larr; Back to Blog</a>
+</article>
+    </main>
+    <footer>
+    <p>&copy; 2026 Frank Sitawa. Built with Jekyll & GitHub Pages.</p>
+</footer>
+
+    
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="/assets/js/3d-background.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleButton = document.getElementById('theme-toggle');
+            const iconDark = document.getElementById('theme-icon-dark');
+            const iconLight = document.getElementById('theme-icon-light');
+
+            function updateIcons(theme) {
+                if (theme === 'light') {
+                    iconDark.style.display = 'block';
+                    iconLight.style.display = 'none';
+                } else {
+                    iconDark.style.display = 'none';
+                    iconLight.style.display = 'block';
+                }
+            }
+
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            updateIcons(currentTheme);
+
+            if(toggleButton) {
+                toggleButton.addEventListener('click', () => {
+                    let theme = document.documentElement.getAttribute('data-theme');
+                    theme = (theme === 'dark') ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', theme);
+                    localStorage.setItem('theme', theme);
+                    updateIcons(theme);
+                    window.dispatchEvent(new Event('themechange'));
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,8 +1,8 @@
 title: Frank Sitawa
 description: Technology, Travel, Food & Life
-url: "http://localhost:4000"
+url: "https://franksitawa.github.io"
 baseurl: ""
-
+google_analytics: "G-SWTE8616BN"
 sass:
   sass_dir: _sass
   style: compressed
