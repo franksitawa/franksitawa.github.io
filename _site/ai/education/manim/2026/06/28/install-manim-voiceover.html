@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installing Manim and Manim Voiceover for AI-Narrated Educational Videos | Frank Sitawa</title>
+    
+    <script>
+        // Check theme preference before rendering to avoid flicker
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link type="application/atom+xml" rel="alternate" href="https://franksitawa.github.io/feed.xml" title="Frank Sitawa" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Installing Manim and Manim Voiceover for AI-Narrated Educational Videos | Frank Sitawa</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Installing Manim and Manim Voiceover for AI-Narrated Educational Videos" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A step-by-step guide to installing Manim Community Edition and the Manim Voiceover plugin on Ubuntu, including a custom XTTS integration for cost-free local narration." />
+<meta property="og:description" content="A step-by-step guide to installing Manim Community Edition and the Manim Voiceover plugin on Ubuntu, including a custom XTTS integration for cost-free local narration." />
+<link rel="canonical" href="https://franksitawa.github.io/ai/education/manim/2026/06/28/install-manim-voiceover.html" />
+<meta property="og:url" content="https://franksitawa.github.io/ai/education/manim/2026/06/28/install-manim-voiceover.html" />
+<meta property="og:site_name" content="Frank Sitawa" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-06-28T09:00:00+03:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Installing Manim and Manim Voiceover for AI-Narrated Educational Videos" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-06-28T09:00:00+03:00","datePublished":"2026-06-28T09:00:00+03:00","description":"A step-by-step guide to installing Manim Community Edition and the Manim Voiceover plugin on Ubuntu, including a custom XTTS integration for cost-free local narration.","headline":"Installing Manim and Manim Voiceover for AI-Narrated Educational Videos","mainEntityOfPage":{"@type":"WebPage","@id":"https://franksitawa.github.io/ai/education/manim/2026/06/28/install-manim-voiceover.html"},"url":"https://franksitawa.github.io/ai/education/manim/2026/06/28/install-manim-voiceover.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+<body>
+    <canvas id="bg-canvas"></canvas>
+    <header>
+    <div style="display: flex; align-items: center;">
+        <img src="/assets/images/profile.jpeg" alt="Frank Sitawa" class="nav-profile-pic">
+        <a href="/" class="site-title">Frank Sitawa</a>
+    </div>
+    <nav style="align-items: center;">
+        
+        <a href="/" >Home</a>
+        
+        <a href="/blog.html" >Blog</a>
+        
+        <a href="/portfolio.html" >Portfolio</a>
+        
+        <a href="/cv.html" >CV</a>
+        
+        <a href="/about.html" >About</a>
+        
+        <button id="theme-toggle" aria-label="Toggle Dark/Light Mode" style="background: none; border: none; cursor: pointer; color: var(--text-color); font-size: 1.2rem; padding: 0;">
+            <svg id="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <svg id="theme-icon-light" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+    </nav>
+</header>
+    <main>
+        <article style="padding-top: 1rem;">
+    <div class="post-header">
+        <h1 class="post-title">Installing Manim and Manim Voiceover for AI-Narrated Educational Videos</h1>
+        <div class="post-meta" style="margin-bottom: 2rem;">
+            28 Jun 2026
+            
+            
+            &bull; By <a href="/authors/franksitawa.html">Frank Sitawa</a>
+            
+        </div>
+    </div>
+
+    <div class="post-content">
+        <p>Manim is the animation engine originally built by 3Blue1Brown for mathematical explainers. The community edition makes it accessible to anyone building educational content with Python. Combined with the Manim Voiceover plugin, you can synchronise generated speech directly with your animations — no manual audio editing required.</p>
+
+<p>This guide covers installation on Ubuntu and a custom XTTS integration that generates narration locally, without cloud API costs.</p>
+
+<hr />
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>Install the system dependencies Manim needs for video rendering, font support, and LaTeX:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt update
+
+<span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> <span class="se">\</span>
+    ffmpeg <span class="se">\</span>
+    libcairo2-dev <span class="se">\</span>
+    pkg-config <span class="se">\</span>
+    python3-dev <span class="se">\</span>
+    pango1.0-tools <span class="se">\</span>
+    texlive <span class="se">\</span>
+    texlive-latex-extra
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="set-up-a-virtual-environment">Set Up a Virtual Environment</h2>
+
+<p>Isolate your project dependencies in a virtual environment:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 <span class="nt">-m</span> venv .venv
+<span class="nb">source</span> .venv/bin/activate
+pip <span class="nb">install</span> <span class="nt">--upgrade</span> pip
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="install-manim">Install Manim</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>manim
+manim <span class="nt">--version</span>
+</code></pre></div></div>
+
+<p>The terminal should print the installed version, confirming Manim is ready.</p>
+
+<hr />
+
+<h2 id="install-manim-voiceover">Install Manim Voiceover</h2>
+
+<p>The Voiceover plugin handles speech generation and synchronises audio timing with animations automatically:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>manim-voiceover
+pip show manim-voiceover
+</code></pre></div></div>
+
+<h3 id="install-audio-dependencies">Install Audio Dependencies</h3>
+
+<p>The plugin requires SoX for audio processing. Without it you will see warnings like:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>WARNING  SoX could not be found!
+</code></pre></div></div>
+
+<p>Install it with:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> sox
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="test-your-installation">Test Your Installation</h2>
+
+<p>Create a file named <code class="language-plaintext highlighter-rouge">hello.py</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">manim</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="k">class</span> <span class="nc">HelloWorld</span><span class="p">(</span><span class="n">Scene</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">construct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="s">"Hello Manim"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">play</span><span class="p">(</span><span class="n">Write</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">wait</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Render and preview it:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>manim <span class="nt">-pql</span> hello.py HelloWorld
+</code></pre></div></div>
+
+<p>Manim will render the animation and open it automatically. If you see the text appear on screen, your installation is working correctly.</p>
+
+<hr />
+
+<h2 id="speech-provider-options">Speech Provider Options</h2>
+
+<p>Manim Voiceover supports several speech backends. Install only the ones you need.</p>
+
+<p>For OpenAI:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>openai
+</code></pre></div></div>
+
+<p>For Azure:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>azure-cognitiveservices-speech
+</code></pre></div></div>
+
+<p>In my own workflow, I use a <strong>custom XTTS service</strong> that connects to a locally running XTTS Docker container. If you missed that setup, you can find it here: <a href="https://franksitawa.github.io/ai/tts/docker/2026/06/25/xxts.html">Running XTTS-v2 with Docker and NVIDIA CUDA on Ubuntu</a>.</p>
+
+<p>This approach gives you natural-sounding narration at zero API cost, with no audio data leaving your machine.</p>
+
+<hr />
+
+<h2 id="a-narrated-animation-scene">A Narrated Animation Scene</h2>
+
+<p>Once installed, adding voiceover to a scene is straightforward. Here is a minimal example using the XTTS service:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">manim</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">manim_voiceover</span> <span class="kn">import</span> <span class="n">VoiceoverScene</span>
+<span class="kn">from</span> <span class="nn">xtts_service</span> <span class="kn">import</span> <span class="n">XTTSService</span>
+
+<span class="k">class</span> <span class="nc">SlidingWindowVideo</span><span class="p">(</span><span class="n">VoiceoverScene</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">construct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">set_speech_service</span><span class="p">(</span><span class="n">XTTSService</span><span class="p">())</span>
+
+        <span class="n">title</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="s">"Sliding Window"</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="p">.</span><span class="n">voiceover</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="s">"Today we learn the sliding window technique."</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">tracker</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">play</span><span class="p">(</span>
+                <span class="n">Write</span><span class="p">(</span><span class="n">title</span><span class="p">),</span>
+                <span class="n">run_time</span><span class="o">=</span><span class="n">tracker</span><span class="p">.</span><span class="n">duration</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="p">.</span><span class="n">wait</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">tracker.duration</code> value comes from the generated audio clip, so the animation automatically stretches or compresses to match the narration length — no manual tweaking required.</p>
+
+<hr />
+
+<h2 id="what-comes-next">What Comes Next</h2>
+
+<p>With Manim and Voiceover in place, the full production workflow becomes:</p>
+
+<ol>
+  <li>Write the lesson as a Python scene</li>
+  <li>The XTTS service generates narration from your script</li>
+  <li>Manim renders animation and audio into a single video file</li>
+  <li>FFmpeg handles any final cuts or formatting</li>
+</ol>
+
+<p>This is the same pipeline I use to produce educational CS content — animated explainers on topics like Big O notation, sorting algorithms, and data structures — entirely from a local machine, with no cloud dependencies.</p>
+
+    </div>
+    
+    <hr>
+    <a href="/blog.html">&larr; Back to Blog</a>
+</article>
+    </main>
+    <footer>
+    <p>&copy; 2026 Frank Sitawa. Built with Jekyll & GitHub Pages.</p>
+</footer>
+
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="/assets/js/3d-background.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleButton = document.getElementById('theme-toggle');
+            const iconDark = document.getElementById('theme-icon-dark');
+            const iconLight = document.getElementById('theme-icon-light');
+
+            function updateIcons(theme) {
+                if (theme === 'light') {
+                    iconDark.style.display = 'block';
+                    iconLight.style.display = 'none';
+                } else {
+                    iconDark.style.display = 'none';
+                    iconLight.style.display = 'block';
+                }
+            }
+
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            updateIcons(currentTheme);
+
+            if (toggleButton) {
+                toggleButton.addEventListener('click', () => {
+                    let theme = document.documentElement.getAttribute('data-theme');
+                    theme = (theme === 'dark') ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', theme);
+                    localStorage.setItem('theme', theme);
+                    updateIcons(theme);
+                    window.dispatchEvent(new Event('themechange'));
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

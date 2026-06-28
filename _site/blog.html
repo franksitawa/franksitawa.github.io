@@ -15,8 +15,10 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="/assets/css/styles.css">
     <link type="application/atom+xml" rel="alternate" href="https://franksitawa.github.io/feed.xml" title="Frank Sitawa" />
     <!-- Begin Jekyll SEO tag v2.8.0 -->
@@ -74,6 +76,20 @@
     <ul class="post-list">
         
         <li>
+            <span class="post-meta" style="display:block; margin-bottom: 0.25rem;">2026-06-28</span>
+            <h3><a href="/ai/education/manim/2026/06/28/manim.-voiceover.html">Building a Custom XTTS Service for Manim Voiceover</a></h3>
+            <p style="margin-top: 0.5rem; color: var(--text-muted);">Manim Voiceover ships with built-in support for services like OpenAI and Azure, but if you are running XTTS locally in Docker, none of those apply....
+            </p>
+        </li>
+        
+        <li>
+            <span class="post-meta" style="display:block; margin-bottom: 0.25rem;">2026-06-28</span>
+            <h3><a href="/ai/education/manim/2026/06/28/install-manim-voiceover.html">Installing Manim and Manim Voiceover for AI-Narrated Educational Videos</a></h3>
+            <p style="margin-top: 0.5rem; color: var(--text-muted);">Manim is the animation engine originally built by 3Blue1Brown for mathematical explainers. The community edition makes it accessible to anyone building educational content with Python....
+            </p>
+        </li>
+        
+        <li>
             <span class="post-meta" style="display:block; margin-bottom: 0.25rem;">2026-06-25</span>
             <h3><a href="/ai/tts/docker/2026/06/25/xxts.html">Running XTTS-v2 with Docker and NVIDIA CUDA on Ubuntu</a></h3>
             <p style="margin-top: 0.5rem; color: var(--text-muted);">XTTS-v2 from Coqui is one of the most capable open-source TTS systems available today. It supports multilingual synthesis and voice cloning from a short audio...
@@ -108,7 +124,7 @@
     <p>&copy; 2026 Frank Sitawa. Built with Jekyll & GitHub Pages.</p>
 </footer>
 
-    
+
     <!-- Three.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="/assets/js/3d-background.js"></script>
@@ -131,7 +147,7 @@
             const currentTheme = localStorage.getItem('theme') || 'dark';
             updateIcons(currentTheme);
 
-            if(toggleButton) {
+            if (toggleButton) {
                 toggleButton.addEventListener('click', () => {
                     let theme = document.documentElement.getAttribute('data-theme');
                     theme = (theme === 'dark') ? 'light' : 'dark';

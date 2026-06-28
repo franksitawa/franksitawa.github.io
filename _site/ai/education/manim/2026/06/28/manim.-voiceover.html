@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building a Custom XTTS Service for Manim Voiceover | Frank Sitawa</title>
+    
+    <script>
+        // Check theme preference before rendering to avoid flicker
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link type="application/atom+xml" rel="alternate" href="https://franksitawa.github.io/feed.xml" title="Frank Sitawa" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Building a Custom XTTS Service for Manim Voiceover | Frank Sitawa</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Building a Custom XTTS Service for Manim Voiceover" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="How to build a custom Manim Voiceover speech service that connects to a locally running XTTS Docker container — giving you free, offline narration with voice cloning." />
+<meta property="og:description" content="How to build a custom Manim Voiceover speech service that connects to a locally running XTTS Docker container — giving you free, offline narration with voice cloning." />
+<link rel="canonical" href="https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover.html" />
+<meta property="og:url" content="https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover.html" />
+<meta property="og:site_name" content="Frank Sitawa" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-06-28T10:00:00+03:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Building a Custom XTTS Service for Manim Voiceover" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-06-28T10:00:00+03:00","datePublished":"2026-06-28T10:00:00+03:00","description":"How to build a custom Manim Voiceover speech service that connects to a locally running XTTS Docker container — giving you free, offline narration with voice cloning.","headline":"Building a Custom XTTS Service for Manim Voiceover","mainEntityOfPage":{"@type":"WebPage","@id":"https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover.html"},"url":"https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+<body>
+    <canvas id="bg-canvas"></canvas>
+    <header>
+    <div style="display: flex; align-items: center;">
+        <img src="/assets/images/profile.jpeg" alt="Frank Sitawa" class="nav-profile-pic">
+        <a href="/" class="site-title">Frank Sitawa</a>
+    </div>
+    <nav style="align-items: center;">
+        
+        <a href="/" >Home</a>
+        
+        <a href="/blog.html" >Blog</a>
+        
+        <a href="/portfolio.html" >Portfolio</a>
+        
+        <a href="/cv.html" >CV</a>
+        
+        <a href="/about.html" >About</a>
+        
+        <button id="theme-toggle" aria-label="Toggle Dark/Light Mode" style="background: none; border: none; cursor: pointer; color: var(--text-color); font-size: 1.2rem; padding: 0;">
+            <svg id="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <svg id="theme-icon-light" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+    </nav>
+</header>
+    <main>
+        <article style="padding-top: 1rem;">
+    <div class="post-header">
+        <h1 class="post-title">Building a Custom XTTS Service for Manim Voiceover</h1>
+        <div class="post-meta" style="margin-bottom: 2rem;">
+            28 Jun 2026
+            
+            
+            &bull; By <a href="/authors/franksitawa.html">Frank Sitawa</a>
+            
+        </div>
+    </div>
+
+    <div class="post-content">
+        <p>Manim Voiceover ships with built-in support for services like OpenAI and Azure, but if you are running XTTS locally in Docker, none of those apply. What you need is a custom service that talks directly to your local XTTS API.</p>
+
+<p>This post walks through building one. If you have not yet set up XTTS or Manim Voiceover, start with these two posts first:</p>
+
+<ul>
+  <li><a href="https://franksitawa.github.io/ai/tts/docker/2026/06/25/xxts.html">Running XTTS-v2 with Docker and NVIDIA CUDA on Ubuntu</a></li>
+  <li><a href="/ai/education/manim/2026/06/28/installing-manim-and-manim-voiceover.html">Installing Manim and Manim Voiceover</a></li>
+</ul>
+
+<hr />
+
+<h2 id="how-the-plugin-works">How the Plugin Works</h2>
+
+<p>Manim Voiceover expects a speech service that extends <code class="language-plaintext highlighter-rouge">SpeechService</code> and implements a single method: <code class="language-plaintext highlighter-rouge">generate_from_text</code>. When your scene hits a <code class="language-plaintext highlighter-rouge">with self.voiceover(...)</code> block, the plugin calls this method, receives a path to the generated audio file, measures the duration, and exposes it as <code class="language-plaintext highlighter-rouge">tracker.duration</code> so your animation can sync to it.</p>
+
+<p>That contract is all you need to implement.</p>
+
+<hr />
+
+<h2 id="the-custom-service">The Custom Service</h2>
+
+<p>Create a file named <code class="language-plaintext highlighter-rouge">xtts_service.py</code> in your project directory:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">manim_voiceover.services.base</span> <span class="kn">import</span> <span class="n">SpeechService</span>
+
+
+<span class="k">class</span> <span class="nc">XTTSService</span><span class="p">(</span><span class="n">SpeechService</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">api_url</span><span class="o">=</span><span class="s">"http://localhost:8020/tts_to_audio"</span><span class="p">,</span>
+        <span class="n">speaker_wav</span><span class="o">=</span><span class="s">"speaker.wav"</span><span class="p">,</span>
+        <span class="n">language</span><span class="o">=</span><span class="s">"en"</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">api_url</span> <span class="o">=</span> <span class="n">api_url</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">speaker_wav</span> <span class="o">=</span> <span class="n">speaker_wav</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">language</span> <span class="o">=</span> <span class="n">language</span>
+
+    <span class="k">def</span> <span class="nf">generate_from_text</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">,</span>
+        <span class="n">cache_dir</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">path</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"text"</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span>
+            <span class="s">"speaker_wav"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">speaker_wav</span><span class="p">,</span>
+            <span class="s">"language"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">language</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">api_url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+        <span class="n">response</span><span class="p">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"original_text"</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span>
+            <span class="s">"input_text"</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span>
+            <span class="s">"output_file"</span><span class="p">:</span> <span class="n">path</span>
+        <span class="p">}</span>
+</code></pre></div></div>
+
+<p>The implementation is intentionally minimal. It sends the text and speaker configuration to XTTS, writes the returned audio bytes to <code class="language-plaintext highlighter-rouge">path</code>, and returns the metadata dictionary Manim Voiceover expects.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> The exact API endpoint may differ depending on which XTTS server image you are running. The <code class="language-plaintext highlighter-rouge">daswer123/xtts-api-server</code> image used in the Docker setup post exposes <code class="language-plaintext highlighter-rouge">/tts_to_audio</code> by default. Check your container’s docs at <code class="language-plaintext highlighter-rouge">http://localhost:8020/docs</code> if you get a 404.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="using-the-service-in-a-scene">Using the Service in a Scene</h2>
+
+<p>With <code class="language-plaintext highlighter-rouge">xtts_service.py</code> in the same directory as your scene file, you can import and use it directly:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">manim</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">manim_voiceover</span> <span class="kn">import</span> <span class="n">VoiceoverScene</span>
+<span class="kn">from</span> <span class="nn">xtts_service</span> <span class="kn">import</span> <span class="n">XTTSService</span>
+
+
+<span class="k">class</span> <span class="nc">BinarySearchVideo</span><span class="p">(</span><span class="n">VoiceoverScene</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">construct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">set_speech_service</span><span class="p">(</span><span class="n">XTTSService</span><span class="p">())</span>
+
+        <span class="n">title</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="s">"Binary Search"</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="p">.</span><span class="n">voiceover</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="s">"Binary search repeatedly cuts the search space in half."</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">tracker</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">play</span><span class="p">(</span>
+                <span class="n">Write</span><span class="p">(</span><span class="n">title</span><span class="p">),</span>
+                <span class="n">run_time</span><span class="o">=</span><span class="n">tracker</span><span class="p">.</span><span class="n">duration</span>
+            <span class="p">)</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">tracker.duration</code> is derived from the actual length of the audio clip XTTS generates. This means the animation timing adjusts automatically to match the narration — no hardcoded <code class="language-plaintext highlighter-rouge">run_time</code> values, no manual syncing.</p>
+
+<hr />
+
+<h2 id="why-not-just-use-a-cloud-service">Why Not Just Use a Cloud Service?</h2>
+
+<p>The built-in OpenAI and Azure services work, but they introduce dependencies that matter at scale:</p>
+
+<ul>
+  <li><strong>Cost</strong> — every render call bills against your API quota. When you are iterating on a scene and re-rendering dozens of times, this adds up fast.</li>
+  <li><strong>Latency</strong> — cloud round-trips slow down your development loop.</li>
+  <li><strong>Voice consistency</strong> — cloud TTS voices are fixed. With XTTS you clone a specific voice once and reuse it across every video in your series, giving your content a consistent identity.</li>
+  <li><strong>Offline capability</strong> — once the Docker container is running, the pipeline works without an internet connection.</li>
+</ul>
+
+<p>For a one-person content production setup, eliminating API costs and keeping everything local makes the workflow significantly more sustainable.</p>
+
+<hr />
+
+<h2 id="extending-the-service">Extending the Service</h2>
+
+<p>A few useful additions once you have the basics working:</p>
+
+<p><strong>Switch voices per scene</strong> — pass a different <code class="language-plaintext highlighter-rouge">speaker_wav</code> when instantiating <code class="language-plaintext highlighter-rouge">XTTSService()</code> to use different voices for different types of content.</p>
+
+<p><strong>Add caching</strong> — XTTS generation takes a moment. If you render the same voiceover line repeatedly during development, caching the audio file by a hash of the text string avoids redundant API calls.</p>
+
+<p><strong>Plug into a pipeline</strong> — because the service is plain Python, it can be called from n8n, LangGraph, or any automation layer. You can build a workflow where lesson scripts are generated by an LLM, passed to Manim scenes, and rendered to video with narration — all without manual intervention.</p>
+
+<hr />
+
+<h2 id="the-bigger-picture">The Bigger Picture</h2>
+
+<p>This custom service is the bridge between the XTTS Docker setup and Manim’s animation pipeline. Once it is in place, the full workflow from text to narrated video runs entirely from Python, entirely on your local machine:</p>
+
+<ol>
+  <li>Write the lesson script</li>
+  <li>Define the Manim scene</li>
+  <li>Render — XTTS generates audio, Manim syncs and composites</li>
+  <li>FFmpeg handles final output formatting</li>
+</ol>
+
+<p>That is the foundation I use for producing animated CS explainers, and it scales cleanly as the content library grows.</p>
+
+    </div>
+    
+    <hr>
+    <a href="/blog.html">&larr; Back to Blog</a>
+</article>
+    </main>
+    <footer>
+    <p>&copy; 2026 Frank Sitawa. Built with Jekyll & GitHub Pages.</p>
+</footer>
+
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="/assets/js/3d-background.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleButton = document.getElementById('theme-toggle');
+            const iconDark = document.getElementById('theme-icon-dark');
+            const iconLight = document.getElementById('theme-icon-light');
+
+            function updateIcons(theme) {
+                if (theme === 'light') {
+                    iconDark.style.display = 'block';
+                    iconLight.style.display = 'none';
+                } else {
+                    iconDark.style.display = 'none';
+                    iconLight.style.display = 'block';
+                }
+            }
+
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            updateIcons(currentTheme);
+
+            if (toggleButton) {
+                toggleButton.addEventListener('click', () => {
+                    let theme = document.documentElement.getAttribute('data-theme');
+                    theme = (theme === 'dark') ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', theme);
+                    localStorage.setItem('theme', theme);
+                    updateIcons(theme);
+                    window.dispatchEvent(new Event('themechange'));
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
