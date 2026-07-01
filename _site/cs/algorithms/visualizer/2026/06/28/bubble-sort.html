@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Sort Visualizer | Frank Sitawa</title>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 20px;
+    }
+
+    h1 {
+        margin-bottom: 10px;
+    }
+
+    .controls {
+        margin-bottom: 20px;
+    }
+
+    button {
+        padding: 10px 16px;
+        margin: 5px;
+        cursor: pointer;
+        border: none;
+        border-radius: 6px;
+    }
+
+    .generate {
+        background: #2563eb;
+        color: white;
+    }
+
+    .sort {
+        background: #16a34a;
+        color: white;
+    }
+
+    #array-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        height: 350px;
+        margin-top: 20px;
+        gap: 8px;
+    }
+
+    .bar {
+        width: 50px;
+        background: #3b82f6;
+        color: white;
+        font-weight: bold;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        padding-bottom: 8px;
+        border-radius: 4px 4px 0 0;
+        position: relative;
+    }
+
+    .comparing {
+        background: #f59e0b;
+    }
+
+    .sorted {
+        background: #22c55e;
+    }
+
+    .swap {
+        background: #ef4444;
+    }
+
+    .info {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+</style>
+    
+
+    <script>
+        // Check theme preference before rendering to avoid flicker
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link type="application/atom+xml" rel="alternate" href="https://franksitawa.github.io/feed.xml" title="Frank Sitawa" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Bubble Sort Visualizer | Frank Sitawa</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Bubble Sort Visualizer" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="An interactive Bubble Sort visualizer — step through comparisons, play at your own pace, or skip a full pass. Colour-coded bars show every swap in real time." />
+<meta property="og:description" content="An interactive Bubble Sort visualizer — step through comparisons, play at your own pace, or skip a full pass. Colour-coded bars show every swap in real time." />
+<link rel="canonical" href="https://franksitawa.github.io/cs/algorithms/visualizer/2026/06/28/bubble-sort.html" />
+<meta property="og:url" content="https://franksitawa.github.io/cs/algorithms/visualizer/2026/06/28/bubble-sort.html" />
+<meta property="og:site_name" content="Frank Sitawa" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-06-28T10:00:00+03:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Bubble Sort Visualizer" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-06-28T10:00:00+03:00","datePublished":"2026-06-28T10:00:00+03:00","description":"An interactive Bubble Sort visualizer — step through comparisons, play at your own pace, or skip a full pass. Colour-coded bars show every swap in real time.","headline":"Bubble Sort Visualizer","mainEntityOfPage":{"@type":"WebPage","@id":"https://franksitawa.github.io/cs/algorithms/visualizer/2026/06/28/bubble-sort.html"},"url":"https://franksitawa.github.io/cs/algorithms/visualizer/2026/06/28/bubble-sort.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+<body>
+    <canvas id="bg-canvas"></canvas>
+    <header>
+    <div style="display: flex; align-items: center;">
+        <img src="/assets/images/profile.jpeg" alt="Frank Sitawa" class="nav-profile-pic">
+        <a href="/" class="site-title">Frank Sitawa</a>
+    </div>
+    <nav style="align-items: center;">
+        
+        <a href="/" >Home</a>
+        
+        <a href="/blog.html" >Blog</a>
+        
+        <a href="/portfolio.html" >Portfolio</a>
+        
+        <a href="/cv.html" >CV</a>
+        
+        <a href="/about.html" >About</a>
+        
+        <button id="theme-toggle" aria-label="Toggle Dark/Light Mode" style="background: none; border: none; cursor: pointer; color: var(--text-color); font-size: 1.2rem; padding: 0;">
+            <svg id="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <svg id="theme-icon-light" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+    </nav>
+</header>
+    <main>
+        <h1>Bubble Sort Visualizer</h1>
+
+<p>
+    Watch Bubble Sort compare adjacent elements and swap them into place.
+</p>
+
+<div class="controls">
+    <button class="generate" onclick="generateArray()">
+        Generate Array
+    </button>
+
+    <button class="sort" onclick="bubbleSort()">
+        Start Bubble Sort
+    </button>
+</div>
+
+<div id="array-container"></div>
+
+<div class="info" id="status">
+    Ready
+</div>
+<script>
+
+    const container = document.getElementById("array-container");
+    const statusText = document.getElementById("status");
+
+    let values = [];
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function generateArray() {
+        container.innerHTML = "";
+
+        values = [];
+
+        for (let i = 0; i < 10; i++) {
+            values.push(Math.floor(Math.random() * 90) + 10);
+        }
+
+        values.forEach(value => {
+            const bar = document.createElement("div");
+
+            bar.classList.add("bar");
+            bar.style.height = `${value * 3}px`;
+            bar.dataset.value = value;
+            bar.innerText = value;
+
+            container.appendChild(bar);
+        });
+
+        statusText.innerText = "Array Generated";
+    }
+
+    async function swapBars(bar1, bar2) {
+
+        const x1 = bar1.offsetLeft;
+        const x2 = bar2.offsetLeft;
+
+        await anime({
+            targets: bar1,
+            translateX: x2 - x1,
+            duration: 500,
+            easing: 'easeInOutQuad'
+        }).finished;
+
+        await anime({
+            targets: bar2,
+            translateX: x1 - x2,
+            duration: 500,
+            easing: 'easeInOutQuad'
+        }).finished;
+
+        bar1.style.transform = '';
+        bar2.style.transform = '';
+
+        const next1 = bar1.nextSibling;
+
+        container.insertBefore(bar2, bar1);
+
+        if (next1) {
+            container.insertBefore(bar1, next1);
+        } else {
+            container.appendChild(bar1);
+        }
+    }
+
+    async function bubbleSort() {
+
+        let bars = document.querySelectorAll(".bar");
+
+        for (let i = 0; i < bars.length; i++) {
+
+            for (let j = 0; j < bars.length - i - 1; j++) {
+
+                bars = document.querySelectorAll(".bar");
+
+                const bar1 = bars[j];
+                const bar2 = bars[j + 1];
+
+                bar1.classList.add("comparing");
+                bar2.classList.add("comparing");
+
+                statusText.innerText =
+                    `Comparing ${bar1.dataset.value} and ${bar2.dataset.value}`;
+
+                await sleep(500);
+
+                const val1 = parseInt(bar1.dataset.value);
+                const val2 = parseInt(bar2.dataset.value);
+
+                if (val1 > val2) {
+
+                    bar1.classList.add("swap");
+                    bar2.classList.add("swap");
+
+                    statusText.innerText =
+                        `Swapping ${val1} and ${val2}`;
+
+                    await swapBars(bar1, bar2);
+
+                    bar1.classList.remove("swap");
+                    bar2.classList.remove("swap");
+                }
+
+                bar1.classList.remove("comparing");
+                bar2.classList.remove("comparing");
+            }
+
+            bars = document.querySelectorAll(".bar");
+            bars[bars.length - i - 1].classList.add("sorted");
+        }
+
+        bars = document.querySelectorAll(".bar");
+
+        bars.forEach(bar => {
+            bar.classList.add("sorted");
+        });
+
+        statusText.innerText = "Sorting Complete!";
+    }
+
+    generateArray();
+
+</script>
+
+
+    </main>
+    <footer>
+    <p>&copy; 2026 Frank Sitawa. Built with Jekyll & GitHub Pages.</p>
+</footer>
+
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="/assets/js/3d-background.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleButton = document.getElementById('theme-toggle');
+            const iconDark = document.getElementById('theme-icon-dark');
+            const iconLight = document.getElementById('theme-icon-light');
+
+            function updateIcons(theme) {
+                if (theme === 'light') {
+                    iconDark.style.display = 'block';
+                    iconLight.style.display = 'none';
+                } else {
+                    iconDark.style.display = 'none';
+                    iconLight.style.display = 'block';
+                }
+            }
+
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            updateIcons(currentTheme);
+
+            if (toggleButton) {
+                toggleButton.addEventListener('click', () => {
+                    let theme = document.documentElement.getAttribute('data-theme');
+                    theme = (theme === 'dark') ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', theme);
+                    localStorage.setItem('theme', theme);
+                    updateIcons(theme);
+                    window.dispatchEvent(new Event('themechange'));
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

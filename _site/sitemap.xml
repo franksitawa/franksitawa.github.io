@@ -2,15 +2,15 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://franksitawa.github.io/authors/franksitawa.html</loc>
-<lastmod>2026-06-28T21:38:41+03:00</lastmod>
+<lastmod>2026-07-01T14:07:27+03:00</lastmod>
 </url>
 <url>
 <loc>https://franksitawa.github.io/portfolio/ecommerce-api.html</loc>
-<lastmod>2026-06-28T21:38:41+03:00</lastmod>
+<lastmod>2026-07-01T14:07:27+03:00</lastmod>
 </url>
 <url>
 <loc>https://franksitawa.github.io/portfolio/financial-dashboard.html</loc>
-<lastmod>2026-06-28T21:38:41+03:00</lastmod>
+<lastmod>2026-07-01T14:07:27+03:00</lastmod>
 </url>
 <url>
 <loc>https://franksitawa.github.io/ai/beginners/2026/06/23/agents.html</loc>
@@ -34,6 +34,10 @@
 </url>
 <url>
 <loc>https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover.html</loc>
+<lastmod>2026-06-28T10:00:00+03:00</lastmod>
+</url>
+<url>
+<loc>https://franksitawa.github.io/cs/algorithms/visualizer/2026/06/28/bubble-sort.html</loc>
 <lastmod>2026-06-28T10:00:00+03:00</lastmod>
 </url>
 <url>

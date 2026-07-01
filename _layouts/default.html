@@ -8,6 +8,10 @@
     {% if jekyll.environment == "production" %}
     {% include google-analytics.html %}
     {% endif %}
+    {% if page.head_include %}
+    {% include {{ page.head_include }} %}
+    {% endif %}
+
     <script>
         // Check theme preference before rendering to avoid flicker
         const currentTheme = localStorage.getItem('theme') || 'dark';

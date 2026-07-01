@@ -6,7 +6,7 @@ title: About Francis
     <h1>About Me</h1>
     
     <p style="font-size: 1.2rem; line-height: 1.8; color: var(--text-muted);">
-        I am an <strong>AI & Fullstack Engineer</strong> with over a decade of experience in architecting and deploying production-grade web applications and intelligent systems.
+        I am an <strong>AI Engineer</strong>, <strong>Full-Stack Software Developer</strong>, <strong>Solutions Architect</strong>, and <strong>Technical Educator</strong> specializing in JavaScript, TypeScript, Angular, Node.js, Python, Generative AI, Retrieval-Augmented Generation (RAG), LangChain, LangGraph, Docker, XTTS, and Manim.
     </p>
 
     <div style="margin-top: 3rem;">

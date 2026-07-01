@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://franksitawa.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://franksitawa.github.io/" rel="alternate" type="text/html" /><updated>2026-06-28T21:38:41+03:00</updated><id>https://franksitawa.github.io/feed.xml</id><title type="html">Frank Sitawa</title><subtitle>Technology, Travel, Food &amp; Life</subtitle><entry><title type="html">Building a Custom XTTS Service for Manim Voiceover</title><link href="https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover.html" rel="alternate" type="text/html" title="Building a Custom XTTS Service for Manim Voiceover" /><published>2026-06-28T10:00:00+03:00</published><updated>2026-06-28T10:00:00+03:00</updated><id>https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover</id><content type="html" xml:base="https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover.html"><![CDATA[<p>Manim Voiceover ships with built-in support for services like OpenAI and Azure, but if you are running XTTS locally in Docker, none of those apply. What you need is a custom service that talks directly to your local XTTS API.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://franksitawa.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://franksitawa.github.io/" rel="alternate" type="text/html" /><updated>2026-07-01T14:07:27+03:00</updated><id>https://franksitawa.github.io/feed.xml</id><title type="html">Frank Sitawa</title><subtitle>Technology, Travel, Food &amp; Life</subtitle><entry><title type="html">Building a Custom XTTS Service for Manim Voiceover</title><link href="https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover.html" rel="alternate" type="text/html" title="Building a Custom XTTS Service for Manim Voiceover" /><published>2026-06-28T10:00:00+03:00</published><updated>2026-06-28T10:00:00+03:00</updated><id>https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover</id><content type="html" xml:base="https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover.html"><![CDATA[<p>Manim Voiceover ships with built-in support for services like OpenAI and Azure, but if you are running XTTS locally in Docker, none of those apply. What you need is a custom service that talks directly to your local XTTS API.</p>
 
 <p>This post walks through building one. If you have not yet set up XTTS or Manim Voiceover, start with these two posts first:</p>
 
@@ -139,7 +139,152 @@
   <li>FFmpeg handles final output formatting</li>
 </ol>
 
-<p>That is the foundation I use for producing animated CS explainers, and it scales cleanly as the content library grows.</p>]]></content><author><name></name></author><category term="ai" /><category term="education" /><category term="manim" /><category term="manim" /><category term="xtts" /><category term="tts" /><category term="voice-cloning" /><category term="python" /><category term="local-ai" /><category term="educational-content" /><category term="docker" /><summary type="html"><![CDATA[How to build a custom Manim Voiceover speech service that connects to a locally running XTTS Docker container — giving you free, offline narration with voice cloning.]]></summary></entry><entry><title type="html">Installing Manim and Manim Voiceover for AI-Narrated Educational Videos</title><link href="https://franksitawa.github.io/ai/education/manim/2026/06/28/install-manim-voiceover.html" rel="alternate" type="text/html" title="Installing Manim and Manim Voiceover for AI-Narrated Educational Videos" /><published>2026-06-28T09:00:00+03:00</published><updated>2026-06-28T09:00:00+03:00</updated><id>https://franksitawa.github.io/ai/education/manim/2026/06/28/install-manim-voiceover</id><content type="html" xml:base="https://franksitawa.github.io/ai/education/manim/2026/06/28/install-manim-voiceover.html"><![CDATA[<p>Manim is the animation engine originally built by 3Blue1Brown for mathematical explainers. The community edition makes it accessible to anyone building educational content with Python. Combined with the Manim Voiceover plugin, you can synchronise generated speech directly with your animations — no manual audio editing required.</p>
+<p>That is the foundation I use for producing animated CS explainers, and it scales cleanly as the content library grows.</p>]]></content><author><name></name></author><category term="ai" /><category term="education" /><category term="manim" /><category term="manim" /><category term="xtts" /><category term="tts" /><category term="voice-cloning" /><category term="python" /><category term="local-ai" /><category term="educational-content" /><category term="docker" /><summary type="html"><![CDATA[How to build a custom Manim Voiceover speech service that connects to a locally running XTTS Docker container — giving you free, offline narration with voice cloning.]]></summary></entry><entry><title type="html">Bubble Sort Visualizer</title><link href="https://franksitawa.github.io/cs/algorithms/visualizer/2026/06/28/bubble-sort.html" rel="alternate" type="text/html" title="Bubble Sort Visualizer" /><published>2026-06-28T10:00:00+03:00</published><updated>2026-06-28T10:00:00+03:00</updated><id>https://franksitawa.github.io/cs/algorithms/visualizer/2026/06/28/bubble-sort</id><content type="html" xml:base="https://franksitawa.github.io/cs/algorithms/visualizer/2026/06/28/bubble-sort.html"><![CDATA[<h1>Bubble Sort Visualizer</h1>
+
+<p>
+    Watch Bubble Sort compare adjacent elements and swap them into place.
+</p>
+
+<div class="controls">
+    <button class="generate" onclick="generateArray()">
+        Generate Array
+    </button>
+
+    <button class="sort" onclick="bubbleSort()">
+        Start Bubble Sort
+    </button>
+</div>
+
+<div id="array-container"></div>
+
+<div class="info" id="status">
+    Ready
+</div>
+<script>
+
+    const container = document.getElementById("array-container");
+    const statusText = document.getElementById("status");
+
+    let values = [];
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function generateArray() {
+        container.innerHTML = "";
+
+        values = [];
+
+        for (let i = 0; i < 10; i++) {
+            values.push(Math.floor(Math.random() * 90) + 10);
+        }
+
+        values.forEach(value => {
+            const bar = document.createElement("div");
+
+            bar.classList.add("bar");
+            bar.style.height = `${value * 3}px`;
+            bar.dataset.value = value;
+            bar.innerText = value;
+
+            container.appendChild(bar);
+        });
+
+        statusText.innerText = "Array Generated";
+    }
+
+    async function swapBars(bar1, bar2) {
+
+        const x1 = bar1.offsetLeft;
+        const x2 = bar2.offsetLeft;
+
+        await anime({
+            targets: bar1,
+            translateX: x2 - x1,
+            duration: 500,
+            easing: 'easeInOutQuad'
+        }).finished;
+
+        await anime({
+            targets: bar2,
+            translateX: x1 - x2,
+            duration: 500,
+            easing: 'easeInOutQuad'
+        }).finished;
+
+        bar1.style.transform = '';
+        bar2.style.transform = '';
+
+        const next1 = bar1.nextSibling;
+
+        container.insertBefore(bar2, bar1);
+
+        if (next1) {
+            container.insertBefore(bar1, next1);
+        } else {
+            container.appendChild(bar1);
+        }
+    }
+
+    async function bubbleSort() {
+
+        let bars = document.querySelectorAll(".bar");
+
+        for (let i = 0; i < bars.length; i++) {
+
+            for (let j = 0; j < bars.length - i - 1; j++) {
+
+                bars = document.querySelectorAll(".bar");
+
+                const bar1 = bars[j];
+                const bar2 = bars[j + 1];
+
+                bar1.classList.add("comparing");
+                bar2.classList.add("comparing");
+
+                statusText.innerText =
+                    `Comparing ${bar1.dataset.value} and ${bar2.dataset.value}`;
+
+                await sleep(500);
+
+                const val1 = parseInt(bar1.dataset.value);
+                const val2 = parseInt(bar2.dataset.value);
+
+                if (val1 > val2) {
+
+                    bar1.classList.add("swap");
+                    bar2.classList.add("swap");
+
+                    statusText.innerText =
+                        `Swapping ${val1} and ${val2}`;
+
+                    await swapBars(bar1, bar2);
+
+                    bar1.classList.remove("swap");
+                    bar2.classList.remove("swap");
+                }
+
+                bar1.classList.remove("comparing");
+                bar2.classList.remove("comparing");
+            }
+
+            bars = document.querySelectorAll(".bar");
+            bars[bars.length - i - 1].classList.add("sorted");
+        }
+
+        bars = document.querySelectorAll(".bar");
+
+        bars.forEach(bar => {
+            bar.classList.add("sorted");
+        });
+
+        statusText.innerText = "Sorting Complete!";
+    }
+
+    generateArray();
+
+</script>]]></content><author><name></name></author><category term="cs" /><category term="algorithms" /><category term="visualizer" /><category term="bubble-sort" /><category term="sorting" /><category term="algorithms" /><category term="visualizer" /><category term="javascript" /><category term="computer-science" /><category term="education" /><summary type="html"><![CDATA[An interactive Bubble Sort visualizer — step through comparisons, play at your own pace, or skip a full pass. Colour-coded bars show every swap in real time.]]></summary></entry><entry><title type="html">Installing Manim and Manim Voiceover for AI-Narrated Educational Videos</title><link href="https://franksitawa.github.io/ai/education/manim/2026/06/28/install-manim-voiceover.html" rel="alternate" type="text/html" title="Installing Manim and Manim Voiceover for AI-Narrated Educational Videos" /><published>2026-06-28T09:00:00+03:00</published><updated>2026-06-28T09:00:00+03:00</updated><id>https://franksitawa.github.io/ai/education/manim/2026/06/28/install-manim-voiceover</id><content type="html" xml:base="https://franksitawa.github.io/ai/education/manim/2026/06/28/install-manim-voiceover.html"><![CDATA[<p>Manim is the animation engine originally built by 3Blue1Brown for mathematical explainers. The community edition makes it accessible to anyone building educational content with Python. Combined with the Manim Voiceover plugin, you can synchronise generated speech directly with your animations — no manual audio editing required.</p>
 
 <p>This guide covers installation on Ubuntu and a custom XTTS integration that generates narration locally, without cloud API costs.</p>
 
