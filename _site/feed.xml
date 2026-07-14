@@ -1,4 +1,269 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://franksitawa.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://franksitawa.github.io/" rel="alternate" type="text/html" /><updated>2026-07-01T14:07:27+03:00</updated><id>https://franksitawa.github.io/feed.xml</id><title type="html">Frank Sitawa</title><subtitle>Technology, Travel, Food &amp; Life</subtitle><entry><title type="html">Building a Custom XTTS Service for Manim Voiceover</title><link href="https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover.html" rel="alternate" type="text/html" title="Building a Custom XTTS Service for Manim Voiceover" /><published>2026-06-28T10:00:00+03:00</published><updated>2026-06-28T10:00:00+03:00</updated><id>https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover</id><content type="html" xml:base="https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover.html"><![CDATA[<p>Manim Voiceover ships with built-in support for services like OpenAI and Azure, but if you are running XTTS locally in Docker, none of those apply. What you need is a custom service that talks directly to your local XTTS API.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://franksitawa.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://franksitawa.github.io/" rel="alternate" type="text/html" /><updated>2026-07-14T11:26:35+03:00</updated><id>https://franksitawa.github.io/feed.xml</id><title type="html">Frank Sitawa</title><subtitle>Technology, Travel, Food &amp; Life</subtitle><entry><title type="html">RAG From Scratch: Express, React, and the Free Gemini API</title><link href="https://franksitawa.github.io/ai/education/2026/07/14/rag.html" rel="alternate" type="text/html" title="RAG From Scratch: Express, React, and the Free Gemini API" /><published>2026-07-14T10:00:00+03:00</published><updated>2026-07-14T10:00:00+03:00</updated><id>https://franksitawa.github.io/ai/education/2026/07/14/rag</id><content type="html" xml:base="https://franksitawa.github.io/ai/education/2026/07/14/rag.html"><![CDATA[<p>Large language models are confident by default — including when they’re wrong. Ask one about something outside its training data, your private notes, or last week’s news, and it will often answer anyway, fluently and incorrectly. Retrieval-Augmented Generation (RAG) is the standard fix: instead of trusting the model’s memory, you hand it the relevant facts at answer time and ask it to work from those.</p>
+
+<p>This post covers the theory in brief, then walks through running and understanding a minimal but complete RAG implementation — <a href="https://github.com/franksitawa/rag-demo"><code class="language-plaintext highlighter-rouge">rag-demo</code></a>, an Express + React app wired to the free Gemini API. It’s the same project I used in a recent session at <a href="https://eldohub.co.ke">Eldohub Eldoret</a> on 3rd July 2026 — <a href="https://eldohubphotography.pixieset.com/fridaycombinedclass/">photos from the event here</a> — and this write-up is the companion reference for anyone who wants to rebuild it step by step.</p>
+
+<hr />
+
+<h2 id="why-rag">Why RAG?</h2>
+
+<p>Before the code, it’s worth being clear about what problem RAG actually solves. Three gaps show up whenever you rely on a model’s memory alone:</p>
+
+<ul>
+  <li><strong>Knowledge cutoff</strong> — training data has a fixed end date. Anything that happened after that date simply doesn’t exist for the model.</li>
+  <li><strong>No access to private data</strong> — a model can’t answer questions about your own notes, docs, or codebase, because it was never trained on them.</li>
+  <li><strong>Hallucination</strong> — when a model is uncertain, it tends to generate a plausible-sounding answer rather than admit it doesn’t know.</li>
+</ul>
+
+<p>RAG addresses all three the same way: retrieve the relevant text from a knowledge source you control, insert it into the prompt as context, and instruct the model to answer <em>from that context</em> — and to say so if the context doesn’t contain the answer. The model still does the writing; it just stops writing from memory alone.</p>
+
+<p>The mechanism has three steps:</p>
+
+<ol>
+  <li><strong>Retrieve</strong> — find the chunks of stored text most relevant to the question.</li>
+  <li><strong>Augment</strong> — insert those chunks into the prompt as grounding evidence.</li>
+  <li><strong>Generate</strong> — the model answers using the supplied context.</li>
+</ol>
+
+<p>Steps 1 and 2 are what separate RAG from a plain chatbot, and they’re what this demo makes visible.</p>
+
+<hr />
+
+<h2 id="how-retrieval-actually-works">How Retrieval Actually Works</h2>
+
+<p>Retrieval depends on two ideas: embeddings and vector similarity.</p>
+
+<p>An <strong>embedding</strong> is a numeric representation of text — a long list of floating-point numbers — produced by an embedding model such that texts with similar meaning end up close together in that numeric space, regardless of the exact words used. “Affordable airfare” and “cheap flights” land near each other even though they share no words.</p>
+
+<p>To find relevant chunks for a question, the app embeds the question and compares it against every stored chunk’s embedding using <strong>cosine similarity</strong> — the cosine of the angle between two vectors. A smaller angle means a higher similarity score. The top-scoring chunks are the ones handed to the model as context.</p>
+
+<p>A <strong>vector database</strong> is just infrastructure built around this idea: store embeddings alongside their source text, and answer “which vectors are closest to this one?” quickly, even across millions of records, using approximate nearest-neighbor indexes instead of comparing against every vector one by one. This demo skips the index — it’s a plain array with a cosine similarity function — because at a few hundred chunks, brute force is fast enough to see the mechanism clearly. The concept is identical to what Pinecone, Chroma, pgvector, or Weaviate do at scale.</p>
+
+<hr />
+
+<h2 id="setting-up-the-demo">Setting Up the Demo</h2>
+
+<p>The full source is at <a href="https://github.com/franksitawa/rag-demo">github.com/franksitawa/rag-demo</a>. It’s a two-process app: an Express backend that handles embedding, storage, and retrieval, and a React (Vite) frontend for adding documents and asking questions.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rag-demo/
+  backend/
+    server.js        # Express routes: /api/documents, /api/query
+    gemini.js         # Calls Gemini embedContent + generateContent REST endpoints
+    vectorStore.js     # In-memory chunking + cosine similarity search
+    .env.example
+    package.json
+  frontend/
+    src/App.jsx        # UI: knowledge base panel + query panel + pipeline trace
+    src/App.css
+    src/index.css
+    package.json
+    vite.config.js     # Proxies /api to the backend during dev
+</code></pre></div></div>
+
+<h3 id="1-get-a-free-gemini-api-key">1. Get a free Gemini API key</h3>
+
+<p>Go to <a href="https://aistudio.google.com/apikey">aistudio.google.com/apikey</a> and create a key. Google AI Studio’s free tier is generous enough to run this demo without paying anything.</p>
+
+<h3 id="2-clone-the-repo-and-start-the-backend">2. Clone the repo and start the backend</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/franksitawa/rag-demo.git
+<span class="nb">cd </span>rag-demo/backend
+npm <span class="nb">install
+cp</span> .env.example .env
+<span class="c"># edit .env and paste your GEMINI_API_KEY</span>
+npm start
+</code></pre></div></div>
+
+<p>The server runs on <code class="language-plaintext highlighter-rouge">http://localhost:3001</code>.</p>
+
+<h3 id="3-start-the-frontend">3. Start the frontend</h3>
+
+<p>In a second terminal:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>rag-demo/frontend
+npm <span class="nb">install
+</span>npm run dev
+</code></pre></div></div>
+
+<p>Open the URL Vite prints — usually <code class="language-plaintext highlighter-rouge">http://localhost:5173</code>.</p>
+
+<h3 id="4-try-it">4. Try it</h3>
+
+<ol>
+  <li>Paste a chunk of text into the <strong>Knowledge base</strong> panel — an article, some notes, anything — and click <strong>Add to knowledge base</strong>. Add a few separate pieces if you like; each is chunked and embedded independently.</li>
+  <li>Type a question related to what you pasted and click <strong>Ask</strong>.</li>
+  <li>Read the answer, then check the retrieved sources underneath — you’ll see exactly which chunks were pulled in and their similarity scores.</li>
+</ol>
+
+<p>Ask something the pasted text doesn’t cover, too. The prompt instructs Gemini to say it doesn’t have enough information rather than guess — that instruction only works because retrieval is doing its job correctly.</p>
+
+<hr />
+
+<h2 id="walking-through-the-code">Walking Through the Code</h2>
+
+<h3 id="geminijs--talking-to-the-api"><code class="language-plaintext highlighter-rouge">gemini.js</code> — talking to the API</h3>
+
+<p>Both embedding and generation go through Gemini’s REST API directly, with no SDK dependency. The key detail is <code class="language-plaintext highlighter-rouge">taskType</code>: chunks being stored use <code class="language-plaintext highlighter-rouge">RETRIEVAL_DOCUMENT</code>, while the user’s question uses <code class="language-plaintext highlighter-rouge">RETRIEVAL_QUERY</code>. Gemini optimizes the resulting vectors differently depending on which side of the search they’re going to be on.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="k">async</span> <span class="kd">function</span> <span class="nx">embedText</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">taskType</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">RETRIEVAL_DOCUMENT</span><span class="dl">"</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">apiKey</span> <span class="o">=</span> <span class="nx">getApiKey</span><span class="p">();</span>
+  <span class="kd">const</span> <span class="nx">url</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">GEMINI_BASE</span><span class="p">}</span><span class="s2">/models/</span><span class="p">${</span><span class="nx">EMBEDDING_MODEL</span><span class="p">}</span><span class="s2">:embedContent?key=</span><span class="p">${</span><span class="nx">apiKey</span><span class="p">}</span><span class="s2">`</span><span class="p">;</span>
+
+  <span class="kd">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">method</span><span class="p">:</span> <span class="dl">"</span><span class="s2">POST</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="dl">"</span><span class="s2">Content-Type</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">application/json</span><span class="dl">"</span> <span class="p">},</span>
+    <span class="na">body</span><span class="p">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+      <span class="na">model</span><span class="p">:</span> <span class="s2">`models/</span><span class="p">${</span><span class="nx">EMBEDDING_MODEL</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span>
+      <span class="na">content</span><span class="p">:</span> <span class="p">{</span> <span class="na">parts</span><span class="p">:</span> <span class="p">[{</span> <span class="nx">text</span> <span class="p">}]</span> <span class="p">},</span>
+      <span class="nx">taskType</span><span class="p">,</span>
+    <span class="p">}),</span>
+  <span class="p">});</span>
+
+  <span class="kd">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+  <span class="k">return</span> <span class="nx">data</span><span class="p">.</span><span class="nx">embedding</span><span class="p">.</span><span class="nx">values</span><span class="p">;</span> <span class="c1">// array of floats</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Generation is a separate call — <code class="language-plaintext highlighter-rouge">generateAnswer(prompt)</code> — that sends a fully-assembled prompt (question plus retrieved context) to <code class="language-plaintext highlighter-rouge">generateContent</code> and returns the model’s text response.</p>
+
+<h3 id="vectorstorejs--the-retrieval-logic"><code class="language-plaintext highlighter-rouge">vectorStore.js</code> — the retrieval logic</h3>
+
+<p>This file is the entire “vector database” in the demo: chunking, storage, and cosine similarity search, in about sixty lines.</p>
+
+<p>Chunking splits long text into overlapping pieces so an idea that straddles a boundary isn’t cut in half:</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">function</span> <span class="nx">chunkText</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">chunkSize</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span> <span class="nx">overlap</span> <span class="o">=</span> <span class="mi">80</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">cleaned</span> <span class="o">=</span> <span class="nx">text</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/</span><span class="se">\s</span><span class="sr">+/g</span><span class="p">,</span> <span class="dl">"</span><span class="s2"> </span><span class="dl">"</span><span class="p">).</span><span class="nx">trim</span><span class="p">();</span>
+  <span class="kd">const</span> <span class="nx">chunks</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="kd">let</span> <span class="nx">start</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">while</span> <span class="p">(</span><span class="nx">start</span> <span class="o">&lt;</span> <span class="nx">cleaned</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">end</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">start</span> <span class="o">+</span> <span class="nx">chunkSize</span><span class="p">,</span> <span class="nx">cleaned</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+    <span class="nx">chunks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">cleaned</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">start</span><span class="p">,</span> <span class="nx">end</span><span class="p">).</span><span class="nx">trim</span><span class="p">());</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">end</span> <span class="o">===</span> <span class="nx">cleaned</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+    <span class="nx">start</span> <span class="o">=</span> <span class="nx">end</span> <span class="o">-</span> <span class="nx">overlap</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">chunks</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nb">Boolean</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Similarity search compares the query vector against every stored vector and returns the highest-scoring matches:</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">cosineSimilarity</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">dot</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">normA</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">normB</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">dot</span> <span class="o">+=</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">*</span> <span class="nx">b</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+    <span class="nx">normA</span> <span class="o">+=</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">*</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+    <span class="nx">normB</span> <span class="o">+=</span> <span class="nx">b</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">*</span> <span class="nx">b</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">dot</span> <span class="o">/</span> <span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">sqrt</span><span class="p">(</span><span class="nx">normA</span><span class="p">)</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">sqrt</span><span class="p">(</span><span class="nx">normB</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">similaritySearch</span><span class="p">(</span><span class="nx">queryVector</span><span class="p">,</span> <span class="nx">k</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">scored</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">({</span>
+    <span class="p">...</span><span class="nx">item</span><span class="p">,</span>
+    <span class="na">score</span><span class="p">:</span> <span class="nx">cosineSimilarity</span><span class="p">(</span><span class="nx">queryVector</span><span class="p">,</span> <span class="nx">item</span><span class="p">.</span><span class="nx">vector</span><span class="p">),</span>
+  <span class="p">}));</span>
+  <span class="nx">scored</span><span class="p">.</span><span class="nx">sort</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">score</span> <span class="o">-</span> <span class="nx">a</span><span class="p">.</span><span class="nx">score</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">scored</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">k</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Swap this file for a call to Pinecone or pgvector and nothing else in the app needs to change — that’s the point of separating retrieval logic from the rest of the pipeline.</p>
+
+<h3 id="serverjs--wiring-it-together"><code class="language-plaintext highlighter-rouge">server.js</code> — wiring it together</h3>
+
+<p>Two routes do all the work. <code class="language-plaintext highlighter-rouge">POST /api/documents</code> chunks and embeds pasted text:</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">app</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="dl">"</span><span class="s2">/api/documents</span><span class="dl">"</span><span class="p">,</span> <span class="k">async</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="p">{</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">source</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+  <span class="kd">const</span> <span class="nx">chunks</span> <span class="o">=</span> <span class="nx">chunkText</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
+  <span class="kd">const</span> <span class="nx">vectors</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">embedBatch</span><span class="p">(</span><span class="nx">chunks</span><span class="p">,</span> <span class="dl">"</span><span class="s2">RETRIEVAL_DOCUMENT</span><span class="dl">"</span><span class="p">);</span>
+  <span class="kd">const</span> <span class="nx">added</span> <span class="o">=</span> <span class="nx">chunks</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">chunkTextValue</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="o">=&gt;</span>
+    <span class="nx">addChunk</span><span class="p">(</span><span class="nx">chunkTextValue</span><span class="p">,</span> <span class="nx">vectors</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">source</span> <span class="o">||</span> <span class="dl">"</span><span class="s2">pasted-text</span><span class="dl">"</span><span class="p">)</span>
+  <span class="p">);</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span> <span class="na">chunks</span><span class="p">:</span> <span class="nx">added</span><span class="p">,</span> <span class="na">totalChunksInStore</span><span class="p">:</span> <span class="nx">storeSize</span><span class="p">()</span> <span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">POST /api/query</code> is the retrieval-augmentation-generation sequence in one place: embed the question, retrieve the top chunks, build a grounded prompt, and generate the answer.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">app</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="dl">"</span><span class="s2">/api/query</span><span class="dl">"</span><span class="p">,</span> <span class="k">async</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="p">{</span> <span class="nx">question</span><span class="p">,</span> <span class="nx">k</span> <span class="o">=</span> <span class="mi">4</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+
+  <span class="kd">const</span> <span class="nx">queryVector</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">embedText</span><span class="p">(</span><span class="nx">question</span><span class="p">,</span> <span class="dl">"</span><span class="s2">RETRIEVAL_QUERY</span><span class="dl">"</span><span class="p">);</span>
+  <span class="kd">const</span> <span class="nx">topChunks</span> <span class="o">=</span> <span class="nx">similaritySearch</span><span class="p">(</span><span class="nx">queryVector</span><span class="p">,</span> <span class="nx">k</span><span class="p">);</span>
+
+  <span class="kd">const</span> <span class="nx">context</span> <span class="o">=</span> <span class="nx">topChunks</span>
+    <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">c</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="s2">`[Source </span><span class="p">${</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">}</span><span class="s2">] </span><span class="p">${</span><span class="nx">c</span><span class="p">.</span><span class="nx">text</span><span class="p">}</span><span class="s2">`</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="dl">"</span><span class="se">\n\n</span><span class="dl">"</span><span class="p">);</span>
+
+  <span class="kd">const</span> <span class="nx">prompt</span> <span class="o">=</span> <span class="s2">`Answer using ONLY the context below. If the answer isn't
+there, say you don't have enough information.
+
+Context:
+</span><span class="p">${</span><span class="nx">context</span><span class="p">}</span><span class="s2">
+
+Question: </span><span class="p">${</span><span class="nx">question</span><span class="p">}</span><span class="s2">
+Answer:`</span><span class="p">;</span>
+
+  <span class="kd">const</span> <span class="nx">answer</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">generateAnswer</span><span class="p">(</span><span class="nx">prompt</span><span class="p">);</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span> <span class="nx">answer</span><span class="p">,</span> <span class="na">sources</span><span class="p">:</span> <span class="nx">topChunks</span> <span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>Everything upstream of this route — chunking, embedding, storage — exists to make this one function call possible: by the time the prompt is built, the model only has to reason over a handful of relevant paragraphs instead of guessing from its training data.</p>
+
+<h3 id="appjsx--showing-the-mechanism-not-hiding-it"><code class="language-plaintext highlighter-rouge">App.jsx</code> — showing the mechanism, not hiding it</h3>
+
+<p>The frontend deliberately doesn’t hide the pipeline behind a plain chat box. A small trace animates through <em>ingest → embed → store</em> and <em>embed query → retrieve → augment → generate</em> as each request runs, and every answer is shown next to the exact chunks and similarity scores that produced it. For a demo whose whole purpose is explaining how RAG works, that visibility matters more than a polished chat UI would.</p>
+
+<hr />
+
+<h2 id="how-this-maps-to-production-rag">How This Maps to Production RAG</h2>
+
+<p>The demo keeps every piece simple enough to read in one sitting, which means it also cuts corners a production system wouldn’t:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>This demo</th>
+      <th>Production equivalent</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>In-memory array + cosine similarity</td>
+      <td>Pinecone, Chroma, pgvector, Weaviate, Qdrant, etc.</td>
+    </tr>
+    <tr>
+      <td>Fixed-size character chunking with overlap</td>
+      <td>Semantic/structural chunking (by heading, sentence, token count)</td>
+    </tr>
+    <tr>
+      <td>Chunks re-embedded on every restart, nothing persisted</td>
+      <td>Persisted vector DB with incremental indexing</td>
+    </tr>
+    <tr>
+      <td>Single free-tier key, sequential embedding calls</td>
+      <td>Batched calls, rate limiting, retries</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>None of those upgrades change the underlying pattern — retrieve, augment, generate — they just make it hold up at scale.</p>
+
+<hr />
+
+<h2 id="where-to-go-from-here">Where to Go From Here</h2>
+
+<p>If you want to extend the demo, a few directions are natural next steps:</p>
+
+<ul>
+  <li><strong>Swap the vector store</strong> for pgvector or Chroma so the knowledge base survives a restart.</li>
+  <li><strong>Add metadata filtering</strong> — tag chunks by source or date and filter before running similarity search.</li>
+  <li><strong>Chain it into a pipeline</strong> — feed it documents from n8n or a scheduled job instead of pasting text by hand, the same way the <a href="/ai/education/manim/2026/06/28/building-a-custom-xtts-service-for-manim-voiceover.html">XTTS voiceover service</a> plugs into an automated video pipeline.</li>
+</ul>
+
+<p>The full code is on GitHub at <a href="https://github.com/franksitawa/rag-demo">franksitawa/rag-demo</a> — clone it, add your own notes to the knowledge base, and see what it gets right and where it falls back to “I don’t have enough information.”</p>]]></content><author><name></name></author><category term="ai" /><category term="education" /><category term="rag" /><category term="vector-database" /><category term="gemini" /><category term="javascript" /><category term="express" /><category term="react" /><category term="nodejs" /><category term="tutorial" /><category term="eldohub" /><summary type="html"><![CDATA[Why Retrieval-Augmented Generation matters, how to run the rag-demo starter repo locally, and a walkthrough of the code that makes retrieval, embedding, and grounded generation work together.]]></summary></entry><entry><title type="html">Building a Custom XTTS Service for Manim Voiceover</title><link href="https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover.html" rel="alternate" type="text/html" title="Building a Custom XTTS Service for Manim Voiceover" /><published>2026-06-28T10:00:00+03:00</published><updated>2026-06-28T10:00:00+03:00</updated><id>https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover</id><content type="html" xml:base="https://franksitawa.github.io/ai/education/manim/2026/06/28/manim.-voiceover.html"><![CDATA[<p>Manim Voiceover ships with built-in support for services like OpenAI and Azure, but if you are running XTTS locally in Docker, none of those apply. What you need is a custom service that talks directly to your local XTTS API.</p>
 
 <p>This post walks through building one. If you have not yet set up XTTS or Manim Voiceover, start with these two posts first:</p>
 
